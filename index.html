@@ -31,6 +31,11 @@
         header { text-align: center; padding: 10px 0 20px; margin-bottom: 20px; }
         h1 { color: var(--accent); font-size: 2rem; margin-bottom: 8px; }
 
+        /* Выбор категории */
+        .category-select-wrapper { text-align: center; margin-bottom: 15px; }
+        .category-select { background-color: var(--card-bg); border: 1px solid var(--accent); color: var(--text-main); padding: 10px 16px; border-radius: 8px; font-size: 1rem; cursor: pointer; outline: none; font-weight: bold; }
+        .category-select:focus { border-color: var(--success); }
+
         /* Раздел КАРТОЧЕК */
         .flashcard-container { perspective: 1000px; width: 100%; max-width: 480px; height: 270px; margin: 20px auto; cursor: pointer; }
         .flashcard { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.6s ease; }
@@ -82,8 +87,16 @@
 
     <!-- Вкладка 1: Карточки слов -->
     <div id="tab-cards" class="tab-content active">
+        
+        <!-- Выпадающий список выбора темы -->
+        <div class="category-select-wrapper">
+            <label for="categoryFilter" style="color: var(--text-muted); margin-right: 8px;">Тема:</label>
+            <select id="categoryFilter" class="category-select" onchange="filterByCategory(this.value)">
+                <!-- Заполняется динамически -->
+            </select>
+        </div>
+
         <div style="text-align: center; margin-bottom: 10px;">
-            <span id="card-category" style="color: var(--accent); font-weight: bold;">Тема</span> | 
             <span id="card-counter" style="color: var(--text-muted);">1 из 10</span>
         </div>
 
@@ -127,7 +140,9 @@
 <script src="cheatsheet.js"></script>
 <script>
 // --- Подгрузка шпаргалок из cheatsheet.js ---
-document.getElementById('cheatsheet-container').innerHTML = cheatSheetHTML;
+if (typeof cheatSheetHTML !== 'undefined') {
+    document.getElementById('cheatsheet-container').innerHTML = cheatSheetHTML;
+}
 
 // --- Переключение вкладок ---
 function switchTab(tabId) {
@@ -138,20 +153,34 @@ function switchTab(tabId) {
     event.target.classList.add('active');
 }
 
-// --- Логика Карточек ---
+// --- Логика Фильтрации и Карточек ---
 let activeWords = [];
 let currentCardIndex = 0;
 
-function initCards() {
-    if (typeof wordsData !== 'undefined' && wordsData.length > 0) {
+function initCategorySelect() {
+    const select = document.getElementById('categoryFilter');
+    if (typeof wordsData === 'undefined') return;
+
+    // Собираем уникальные категории
+    const categories = ['Все темы', ...new Set(wordsData.map(w => w.category))];
+    select.innerHTML = categories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
+
+    // По умолчанию ставим фильтр "Все темы"
+    filterByCategory('Все темы');
+}
+
+function filterByCategory(category) {
+    if (category === 'Все темы') {
         activeWords = shuffleWords(wordsData);
-        currentCardIndex = 0;
-        updateCard();
+    } else {
+        activeWords = shuffleWords(wordsData.filter(w => w.category === category));
     }
+    currentCardIndex = 0;
+    updateCard();
 }
 
 function updateCard() {
-    if (activeWords.length === 0) return;
+    if (!activeWords || activeWords.length === 0) return;
     const card = activeWords[currentCardIndex];
     document.getElementById('flashcard').classList.remove('flipped');
     
@@ -159,7 +188,6 @@ function updateCard() {
         document.getElementById('card-de').innerText = card.de;
         document.getElementById('card-ru').innerText = card.ru;
         document.getElementById('card-pl').innerText = `Мн.ч. / формы: ${card.pl}`;
-        document.getElementById('card-category').innerText = card.category;
         document.getElementById('card-counter').innerText = `${currentCardIndex + 1} из ${activeWords.length}`;
     }, 150);
 }
@@ -184,8 +212,8 @@ function reshuffle() {
     updateCard();
 }
 
-// Инициализация при старте
-initCards();
+// Инициализация выпадающего меню при старте
+initCategorySelect();
 
 // --- Логика Тренажера Perfekt ---
 const quizData = [

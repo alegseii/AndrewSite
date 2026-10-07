@@ -1,31 +1,36 @@
-// База слов по модулям
+// База слов с разбивкой по темам (уровень A1)
 const wordsData = [
-    // --- Город, Транспорт и Ориентация (S. 44) ---
-    { de: "die Ampel", pl: "die Ampeln", ru: "светофор", category: "Stadt & Verkehr" },
-    { de: "die Anmeldung", pl: "die Anmeldungen", ru: "регистрация, запись", category: "Stadt & Verkehr" },
-    { de: "die Auskunft", pl: "die Auskünfte", ru: "справочная, справка", category: "Stadt & Verkehr" },
-    { de: "der Ausweis", pl: "die Ausweise", ru: "документ, удостоверение", category: "Stadt & Verkehr" },
-    { de: "die Bahn", pl: "die Bahnen", ru: "поезд, железная дорога", category: "Stadt & Verkehr" },
-    { de: "der Bahnhof", pl: "die Bahnhöfe", ru: "вокзал", category: "Stadt & Verkehr" },
-    { de: "das Gehalt", pl: "die Gehälter", ru: "зарплата", category: "Stadt & Verkehr" },
-    { de: "die Jugendherberge", pl: "die Jugendherbergen", ru: "хостел для молодёжи", category: "Stadt & Verkehr" },
-    { de: "die Kantine", pl: "die Kantinen", ru: "столовая", category: "Stadt & Verkehr" },
-    { de: "die Kirche", pl: "die Kirchen", ru: "церковь", category: "Stadt & Verkehr" },
-    { de: "die Kreuzung", pl: "die Kreuzungen", ru: "перекрёсток", category: "Stadt & Verkehr" },
-    { de: "der Pass", pl: "die Pässe", ru: "загранпаспорт", category: "Stadt & Verkehr" },
-    { de: "die Richtung", pl: "die Richtungen", ru: "направление", category: "Stadt & Verkehr" },
-    { de: "der Stadtplan", pl: "die Stadtpläne", ru: "карта города", category: "Stadt & Verkehr" },
-    { de: "der Verkehr", pl: "без мн.ч.", ru: "транспорт, движение", category: "Stadt & Verkehr" },
-    { de: "der Weg", pl: "die Wege", ru: "дорога, путь", category: "Stadt & Verkehr" },
-    { de: "ankommen", pl: "kam an, angekommen", ru: "прибывать", category: "Stadt & Verkehr" },
-    { de: "anschauen", pl: "schaute an, angeschaut", ru: "рассматривать", category: "Stadt & Verkehr" },
-    { de: "aussteigen", pl: "stieg aus, ausgestiegen", ru: "выходить из транспорта", category: "Stadt & Verkehr" },
-    { de: "besichtigen", pl: "besichtigte, besichtigt", ru: "осматривать (достопримечательности)", category: "Stadt & Verkehr" },
-    { de: "erleben", pl: "erlebte, erlebt", ru: "переживать, испытывать", category: "Stadt & Verkehr" },
-    { de: "halten", pl: "hielt, gehalten", ru: "останавливаться", category: "Stadt & Verkehr" },
-    { de: "umsteigen", pl: "stieg um, umgestiegen", ru: "пересаживаться", category: "Stadt & Verkehr" },
+    // --- 1. Покупки и Еда (Einkaufen & Essen) ---
+    { de: "der Supermarkt", pl: "die Supermärkte", ru: "супермаркет", category: "Einkaufen & Essen" },
+    { de: "einkaufen", pl: "kaufte ein, eingekauft", ru: "делать покупки", category: "Einkaufen & Essen" },
+    { de: "kaufen", pl: "kaufte, gekauft", ru: "покупать", category: "Einkaufen & Essen" },
+    { de: "verkaufen", pl: "verkaufte, verkauft", ru: "продавать", category: "Einkaufen & Essen" },
+    { de: "der Verkäufer", pl: "die Verkäufer", ru: "продавец", category: "Einkaufen & Essen" },
+    { de: "der Kunde", pl: "die Kunden", ru: "покупатель, клиент", category: "Einkaufen & Essen" },
+    { de: "das Angebot", pl: "die Angebote", ru: "предложение, акция", category: "Einkaufen & Essen" },
+    { de: "der Preis", pl: "die Preise", ru: "цена", category: "Einkaufen & Essen" },
+    { de: "kosten", pl: "kostete, gekostet", ru: "стоить", category: "Einkaufen & Essen" },
+    { de: "die Kasse", pl: "die Kassen", ru: "касса", category: "Einkaufen & Essen" },
+    { de: "bezahlen", pl: "bezahlte, bezahlt", ru: "оплачивать", category: "Einkaufen & Essen" },
+    { de: "das Geld", pl: "без мн.ч.", ru: "деньги", category: "Einkaufen & Essen" },
+    { de: "die Quittung", pl: "die Quittungen", ru: "чек, расписка", category: "Einkaufen & Essen" },
+    { de: "die Tüte", pl: "die Tüten", ru: "пакет", category: "Einkaufen & Essen" },
+    { de: "das Lebensmittel", pl: "die Lebensmittel", ru: "продукты питания", category: "Einkaufen & Essen" },
+    { de: "das Brot", pl: "die Brote", ru: "хлеб", category: "Einkaufen & Essen" },
+    { de: "die Brötchen", pl: "Plural", ru: "булочки", category: "Einkaufen & Essen" },
+    { de: "die Milch", pl: "без мн.ч.", ru: "молоко", category: "Einkaufen & Essen" },
+    { de: "der Käse", pl: "без мн.ч.", ru: "сыр", category: "Einkaufen & Essen" },
+    { de: "das Fleisch", pl: "без мн.ч.", ru: "мясо", category: "Einkaufen & Essen" },
+    { de: "der Fisch", pl: "die Fische", ru: "рыба", category: "Einkaufen & Essen" },
+    { de: "das Obst", pl: "без мн.ч.", ru: "фрукты", category: "Einkaufen & Essen" },
+    { de: "das Gemüse", pl: "без мн.ч.", ru: "овощи", category: "Einkaufen & Essen" },
+    { de: "der Apfel", pl: "die Äpfel", ru: "яблоко", category: "Einkaufen & Essen" },
+    { de: "die Flasche", pl: "die Flaschen", ru: "бутылка", category: "Einkaufen & Essen" },
+    { de: "das Wasser", pl: "без мн.ч.", ru: "вода", category: "Einkaufen & Essen" },
+    { de: "der Kaffee", pl: "без мн.ч.", ru: "кофе", category: "Einkaufen & Essen" },
+    { de: "der Tee", pl: "die Tees", ru: "чай", category: "Einkaufen & Essen" },
 
-    // --- Здоровье, Тело и Врачи (S. 68) ---
+    // --- 2. Здоровье и Тело (Gesundheit) ---
     { de: "der Arm", pl: "die Arme", ru: "рука (от плеча)", category: "Gesundheit" },
     { de: "der Arzt", pl: "die Ärzte", ru: "врач", category: "Gesundheit" },
     { de: "das Auge", pl: "die Augen", ru: "глаз", category: "Gesundheit" },
@@ -58,10 +63,73 @@ const wordsData = [
     { de: "abnehmen", pl: "nahm ab, abgenommen", ru: "худеть", category: "Gesundheit" },
     { de: "untersuchen", pl: "untersuchte, untersucht", ru: "обследовать", category: "Gesundheit" },
     { de: "wehtun", pl: "tat weh, wehgetan", ru: "болеть, причинять боль", category: "Gesundheit" },
-    { de: "zunehmen", pl: "nahm zu, zugenommen", ru: "полнеть", category: "Gesundheit" }
+    { de: "zunehmen", pl: "nahm zu, zugenommen", ru: "полнеть", category: "Gesundheit" },
+
+    // --- 3. Город и Транспорт (Stadt & Verkehr) ---
+    { de: "die Ampel", pl: "die Ampeln", ru: "светофор", category: "Stadt & Verkehr" },
+    { de: "die Anmeldung", pl: "die Anmeldungen", ru: "регистрация, запись", category: "Stadt & Verkehr" },
+    { de: "die Auskunft", pl: "die Auskünfte", ru: "справочная, справка", category: "Stadt & Verkehr" },
+    { de: "der Ausweis", pl: "die Ausweise", ru: "документ, удостоверение", category: "Stadt & Verkehr" },
+    { de: "die Bahn", pl: "die Bahnen", ru: "поезд, железная дорога", category: "Stadt & Verkehr" },
+    { de: "der Bahnhof", pl: "die Bahnhöfe", ru: "вокзал", category: "Stadt & Verkehr" },
+    { de: "die Jugendherberge", pl: "die Jugendherbergen", ru: "хостел для молодёжи", category: "Stadt & Verkehr" },
+    { de: "die Kirche", pl: "die Kirchen", ru: "церковь", category: "Stadt & Verkehr" },
+    { de: "die Kreuzung", pl: "die Kreuzungen", ru: "перекрёсток", category: "Stadt & Verkehr" },
+    { de: "der Pass", pl: "die Pässe", ru: "загранпаспорт", category: "Stadt & Verkehr" },
+    { de: "die Richtung", pl: "die Richtungen", ru: "направление", category: "Stadt & Verkehr" },
+    { de: "der Stadtplan", pl: "die Stadtpläne", ru: "карта города", category: "Stadt & Verkehr" },
+    { de: "der Verkehr", pl: "без мн.ч.", ru: "транспорт, движение", category: "Stadt & Verkehr" },
+    { de: "der Weg", pl: "die Wege", ru: "дорога, путь", category: "Stadt & Verkehr" },
+    { de: "ankommen", pl: "kam an, angekommen", ru: "прибывать", category: "Stadt & Verkehr" },
+    { de: "aussteigen", pl: "stieg aus, ausgestiegen", ru: "выходить из транспорта", category: "Stadt & Verkehr" },
+    { de: "besichtigen", pl: "besichtigte, besichtigt", ru: "осматривать (достопримечательности)", category: "Stadt & Verkehr" },
+    { de: "halten", pl: "hielt, gehalten", ru: "останавливаться", category: "Stadt & Verkehr" },
+    { de: "umsteigen", pl: "stieg um, umgestiegen", ru: "пересаживаться", category: "Stadt & Verkehr" },
+
+    // --- 4. Дом и Проживание (Wohnen & Haus) ---
+    { de: "die Wohnung", pl: "die Wohnungen", ru: "квартира", category: "Wohnen & Haus" },
+    { de: "das Haus", pl: "die Häuser", ru: "дом", category: "Wohnen & Haus" },
+    { de: "Zimmer", pl: "die Zimmer", ru: "комната", category: "Wohnen & Haus" },
+    { de: "die Miete", pl: "die Mieten", ru: "арендная плата", category: "Wohnen & Haus" },
+    { de: "der Vermieter", pl: "die Vermieter", ru: "арендодатель", category: "Wohnen & Haus" },
+    { de: "die Küche", pl: "die Küchen", ru: "кухня", category: "Wohnen & Haus" },
+    { de: "das Bad", pl: "die Bäder", ru: "ванная комната", category: "Wohnen & Haus" },
+    { de: "der Schrank", pl: "die Schränke", ru: "шкаф", category: "Wohnen & Haus" },
+    { de: "der Tisch", pl: "die Tische", ru: "стол", category: "Wohnen & Haus" },
+    { de: "der Stuhl", pl: "die Stühle", ru: "стул", category: "Wohnen & Haus" },
+    { de: "das Bett", pl: "die Betten", ru: "кровать", category: "Wohnen & Haus" },
+    { de: "der Schlüssel", pl: "die Schlüssel", ru: "ключ", category: "Wohnen & Haus" },
+
+    // --- 5. Работа и Обучение (Arbeit & Lernen) ---
+    { de: "die Arbeit", pl: "die Arbeiten", ru: "работа", category: "Arbeit & Lernen" },
+    { de: "der Beruf", pl: "die Berufe", ru: "профессия", category: "Arbeit & Lernen" },
+    { de: "das Gehalt", pl: "die Gehälter", ru: "зарплата", category: "Arbeit & Lernen" },
+    { de: "die Kantine", pl: "die Kantinen", ru: "столовая", category: "Arbeit & Lernen" },
+    { de: "der Chef", pl: "die Chefs", ru: "начальник", category: "Arbeit & Lernen" },
+    { de: "der Kollege", pl: "die Kollegen", ru: "коллега", category: "Arbeit & Lernen" },
+    { de: "das Büro", pl: "die Büros", ru: "офис", category: "Arbeit & Lernen" },
+    { de: "lernen", pl: "lernte, gelernt", ru: "учиться", category: "Arbeit & Lernen" },
+    { de: "arbeiten", pl: "arbeitete, gearbeitet", ru: "работать", category: "Arbeit & Lernen" },
+    { de: "der Kurs", pl: "die Kurse", ru: "курс", category: "Arbeit & Lernen" },
+    { de: "die Schule", pl: "die Schulen", ru: "школа", category: "Arbeit & Lernen" },
+
+    // --- 6. Время и Семья (Zeit & Familie) ---
+    { de: "der Tag", pl: "die Tage", ru: "день", category: "Zeit & Familie" },
+    { de: "die Woche", pl: "die Wochen", ru: "неделя", category: "Zeit & Familie" },
+    { de: "der Monat", pl: "die Monate", ru: "месяц", category: "Zeit & Familie" },
+    { de: "das Jahr", pl: "die Jahre", ru: "год", category: "Zeit & Familie" },
+    { de: "die Zeit", pl: "без мн.ч.", ru: "время", category: "Zeit & Familie" },
+    { de: "die Uhr", pl: "die Uhren", ru: "часы / час (время)", category: "Zeit & Familie" },
+    { de: "die Familie", pl: "die Familien", ru: "семья", category: "Zeit & Familie" },
+    { de: "die Mutter", pl: "die Mütter", ru: "мать", category: "Zeit & Familie" },
+    { de: "der Vater", pl: "die Väter", ru: "отец", category: "Zeit & Familie" },
+    { de: "das Kind", pl: "die Kinder", ru: "ребёнок", category: "Zeit & Familie" },
+    { de: "der Bruder", pl: "die Brüder", ru: "брат", category: "Zeit & Familie" },
+    { de: "die Schwester", pl: "die Schwestern", ru: "сестра", category: "Zeit & Familie" },
+    { de: "der Freund", pl: "die Freunde", ru: "друг", category: "Zeit & Familie" }
 ];
 
-// Функция перемешивания карточек в случайном порядке (Алгоритм Фишера-Йейтса)
+// Алгоритм Фишера-Йейтса для перемешивания карточек
 function shuffleWords(array) {
     let shuffled = [...array];
     for (let i = shuffled.length - 1; i > 0; i--) {
