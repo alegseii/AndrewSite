@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Немецкий A1-A2: Тренажер Perfekt (30 Заданий)</title>
+    <title>Deutsch A1: Hub & Trainer</title>
     <style>
         :root {
             --bg-color: #0f172a;
@@ -16,636 +16,217 @@
             --border: #334155;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); padding: 20px; min-height: 100vh; }
+        .container { max-width: 900px; margin: 0 auto; padding-bottom: 60px; }
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            padding: 20px;
-            min-height: 100vh;
-        }
+        /* Навигация */
+        nav { display: flex; justify-content: center; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; }
+        .nav-btn { background-color: var(--card-bg); border: 1px solid var(--border); color: var(--text-main); padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.2s ease; }
+        .nav-btn:hover, .nav-btn.active { border-color: var(--accent); background-color: #334155; color: var(--accent); }
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding-bottom: 60px;
-        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
 
-        header {
-            text-align: center;
-            padding: 20px 0 30px;
-            border-bottom: 2px solid var(--border);
-            margin-bottom: 25px;
-        }
+        header { text-align: center; padding: 10px 0 20px; margin-bottom: 20px; }
+        h1 { color: var(--accent); font-size: 2rem; margin-bottom: 8px; }
 
-        h1 {
-            color: var(--accent);
-            font-size: 2rem;
-            margin-bottom: 8px;
-        }
+        /* Раздел КАРТОЧЕК */
+        .flashcard-container { perspective: 1000px; width: 100%; max-width: 450px; height: 260px; margin: 20px auto; cursor: pointer; }
+        .flashcard { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.6s ease; }
+        .flashcard.flipped { transform: rotateY(180deg); }
+        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 12px; border: 2px solid var(--accent); background-color: var(--card-bg); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; text-align: center; box-shadow: 0 8px 25px rgba(0,0,0,0.4); }
+        .card-back { transform: rotateY(180deg); border-color: var(--success); }
+        .card-word { font-size: 1.8rem; font-weight: bold; color: var(--text-main); margin-bottom: 10px; }
+        .card-sub { font-size: 1.1rem; color: var(--text-muted); }
+        .card-hint { position: absolute; bottom: 12px; font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
 
-        .subtitle {
-            color: var(--text-muted);
-            font-size: 1.05rem;
-        }
+        .controls { display: flex; justify-content: center; gap: 15px; margin-top: 20px; }
+        .action-btn { background-color: var(--accent); color: #0f172a; border: none; padding: 10px 24px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .action-btn:hover { opacity: 0.9; transform: translateY(-2px); }
 
-        .score-board {
-            position: sticky;
-            top: 15px;
-            z-index: 100;
-            background-color: var(--card-bg);
-            border: 2px solid var(--accent);
-            border-radius: 10px;
-            padding: 12px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-        }
+        /* Раздел ШПАРАГАЛОК */
+        .cheat-card { background-color: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 20px; line-height: 1.6; }
+        .cheat-card h2 { color: var(--accent); margin-bottom: 12px; font-size: 1.3rem; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; }
+        th { background-color: #0f172a; color: var(--accent); }
 
-        .score-text {
-            font-size: 1.1rem;
-            font-weight: 600;
-        }
-
-        .score-num {
-            color: var(--accent);
-            font-size: 1.3rem;
-        }
-
-        .exercise-item {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .exercise-num {
-            color: var(--accent);
-            font-weight: bold;
-            margin-bottom: 6px;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .exercise-title {
-            font-size: 1.1rem;
-            margin-bottom: 14px;
-            line-height: 1.45;
-        }
-
-        .options-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .option-btn {
-            background-color: var(--bg-color);
-            border: 1px solid var(--border);
-            color: var(--text-main);
-            padding: 12px 15px;
-            border-radius: 6px;
-            cursor: pointer;
-            text-align: left;
-            font-size: 0.98rem;
-            transition: all 0.2s ease;
-        }
-
-        .option-btn:hover:not([disabled]) {
-            border-color: var(--accent);
-            background-color: #1e293b;
-        }
-
-        .option-btn[disabled] {
-            cursor: default;
-        }
-
-        .feedback {
-            margin-top: 14px;
-            padding: 14px;
-            border-radius: 6px;
-            font-weight: 500;
-            display: none;
-            line-height: 1.5;
-        }
-
-        .feedback.correct {
-            display: block;
-            background-color: rgba(34, 197, 94, 0.15);
-            border: 1px solid var(--success);
-            color: #4ade80;
-        }
-
-        .feedback.incorrect {
-            display: block;
-            background-color: rgba(239, 68, 68, 0.15);
-            border: 1px solid var(--error);
-            color: #f87171;
-        }
-
-        .correct-highlight {
-            color: #4ade80;
-            font-weight: bold;
-            margin-top: 8px;
-            display: block;
-        }
-
-        /* Summary section styles */
-        .summary-section {
-            margin-top: 40px;
-            background-color: var(--card-bg);
-            border: 2px solid var(--accent);
-            border-radius: 12px;
-            padding: 25px;
-            display: none;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-
-        .summary-title {
-            font-size: 1.5rem;
-            color: var(--accent);
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
-        .summary-stats {
-            text-align: center;
-            font-size: 1.1rem;
-            margin-bottom: 25px;
-            color: var(--text-muted);
-        }
-
-        .error-card {
-            background-color: var(--bg-color);
-            border: 1px solid var(--error);
-            border-radius: 8px;
-            padding: 16px;
-            margin-bottom: 15px;
-        }
-
-        .error-card-title {
-            font-weight: bold;
-            font-size: 1.05rem;
-            margin-bottom: 8px;
-            color: var(--text-main);
-        }
-
-        .error-user-ans {
-            color: #f87171;
-            margin-bottom: 6px;
-            font-size: 0.95rem;
-        }
-
-        .error-correct-ans {
-            color: #4ade80;
-            font-size: 0.95rem;
-        }
-
-        .restart-btn {
-            display: block;
-            margin: 30px auto 0;
-            background-color: var(--accent);
-            color: #0f172a;
-            font-weight: bold;
-            font-size: 1.1rem;
-            padding: 12px 30px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .restart-btn:hover {
-            opacity: 0.9;
-            transform: translateY(-2px);
-        }
+        /* Стили тренажера Perfekt */
+        .score-board { position: sticky; top: 15px; z-index: 100; background-color: var(--card-bg); border: 2px solid var(--accent); border-radius: 10px; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+        .exercise-item { background-color: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 20px; }
+        .options-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-top: 10px; }
+        .option-btn { background-color: var(--bg-color); border: 1px solid var(--border); color: var(--text-main); padding: 12px 15px; border-radius: 6px; cursor: pointer; text-align: left; transition: all 0.2s ease; }
+        .option-btn:hover:not([disabled]) { border-color: var(--accent); }
+        .feedback { margin-top: 14px; padding: 14px; border-radius: 6px; display: none; }
+        .feedback.correct { display: block; background-color: rgba(34, 197, 94, 0.15); border: 1px solid var(--success); color: #4ade80; }
+        .feedback.incorrect { display: block; background-color: rgba(239, 68, 68, 0.15); border: 1px solid var(--error); color: #f87171; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header>
-        <h1>Немецкий Язык: Мастер Perfekt</h1>
-        <p class="subtitle">30 интенсивных упражнений на Haben/Sein, Partizip II и порядок слов</p>
+        <h1>Deutsch A1: Учебный Вход</h1>
+        <p style="color: var(--text-muted)">Карточки слов, шпаргалки и интерактивные тренажёры</p>
     </header>
 
-    <div class="score-board">
-        <div class="score-text">Твой результат: <span id="score" class="score-num">0</span> / 30</div>
-        <div id="progress-percent" style="color: var(--text-muted); font-weight: 600;">0%</div>
+    <!-- Навигация по разделам -->
+    <nav>
+        <button class="nav-btn active" onclick="switchTab('cards')">🎴 Карточки слов</button>
+        <button class="nav-btn" onclick="switchTab('cheatsheet')">📖 Шпаргалки A1</button>
+        <button class="nav-btn" onclick="switchTab('perfekt-quiz')">⚡ Тренажёр Perfekt</button>
+    </nav>
+
+    <!-- Вкладка 1: Карточки слов -->
+    <div id="tab-cards" class="tab-content active">
+        <div style="text-align: center; margin-bottom: 10px;">
+            <span id="card-category" style="color: var(--accent); font-weight: bold;">Тема</span> | 
+            <span id="card-counter" style="color: var(--text-muted);">1 из 10</span>
+        </div>
+
+        <div class="flashcard-container" onclick="flipCard()">
+            <div class="flashcard" id="flashcard">
+                <div class="card-face card-front">
+                    <div class="card-word" id="card-de">Wort</div>
+                    <div class="card-hint">Кликни, чтобы перевернуть</div>
+                </div>
+                <div class="card-face card-back">
+                    <div class="card-word" id="card-ru">Перевод</div>
+                    <div class="card-sub" id="card-pl">Форма мн.ч.</div>
+                    <div class="card-hint">Русский перевод</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="action-btn" onclick="prevCard()">← Назад</button>
+            <button class="action-btn" onclick="nextCard()">Вперёд →</button>
+        </div>
     </div>
 
-    <div id="quiz-container">
-        <!-- Упражнения генерируются JS -->
+    <!-- Вкладка 2: Шпаргалки -->
+    <div id="tab-cheatsheet" class="tab-content">
+        <div class="cheat-card">
+            <h2>1. Время Perfekt (Прошедшее разговорное)</h2>
+            <p>Образуется по формуле: <b>haben / sein (на 2-м месте) + Partizip II (в самом конце)</b>.</p>
+            <table>
+                <tr><th>Вспомогательный глагол</th><th>Когда используется</th><th>Пример</th></tr>
+                <tr><td><b>sein</b></td><td>Движение (из А в Б), смена состояния, плюс <i>bleiben</i> и <i>sein</i></td><td>Ich <b>bin</b> gefahren. / Er <b>ist</b> eingeschlafen.</td></tr>
+                <tr><td><b>haben</b></td><td>Все остальные глаголы (процесс, действие с предметом)</td><td>Ich <b>habe</b> gekauft. / Wir <b>haben</b> geschlafen.</td></tr>
+            </table>
+        </div>
+
+        <div class="cheat-card">
+            <h2>2. Артикли и Падежи (Akkusativ & Dativ)</h2>
+            <table>
+                <tr><th>Падеж</th><th>Мужской (der)</th><th>Средний (das)</th><th>Женский (die)</th><th>Мн.ч. (die)</th></tr>
+                <tr><td><b>Nominativ</b> (Кто/Что?)</td><td>der / ein</td><td>das / ein</td><td>die / eine</td><td>die / -</td></tr>
+                <tr><td><b>Akkusativ</b> (Кого/Что/Куда?)</td><td><b style="color: var(--accent)">den / einen</b></td><td>das / ein</td><td>die / eine</td><td>die / -</td></tr>
+                <tr><td><b>Dativ</b> (Кому/Где?)</td><td><b>dem / einem</b></td><td><b>dem / einem</b></td><td><b>der / einer</b></td><td><b>den / -n</b></td></tr>
+            </table>
+        </div>
     </div>
 
-    <div id="summary-container" class="summary-section">
-        <h2 class="summary-title">🏁 Результаты и разбор ошибок</h2>
-        <div id="summary-stats" class="summary-stats"></div>
-        <div id="errors-list"></div>
-        <button class="restart-btn" onclick="location.reload()">Пройти заново</button>
+    <!-- Вкладка 3: Тренажер Perfekt -->
+    <div id="tab-perfekt-quiz" class="tab-content">
+        <div class="score-board">
+            <div>Твой результат: <span id="score" style="color: var(--accent); font-size: 1.3rem; font-weight: bold;">0</span> / 30</div>
+            <div id="progress-percent" style="color: var(--text-muted); font-weight: 600;">0%</div>
+        </div>
+        <div id="quiz-container"></div>
     </div>
 </div>
 
+<script src="words.js"></script>
 <script>
+// --- Переключение вкладок ---
+function switchTab(tabId) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+    
+    document.getElementById(`tab-${tabId}`).classList.add('active');
+    event.target.classList.add('active');
+}
+
+// --- Логика Карточек ---
+let currentCardIndex = 0;
+
+function updateCard() {
+    if (typeof wordsData === 'undefined' || wordsData.length === 0) return;
+    const card = wordsData[currentCardIndex];
+    document.getElementById('flashcard').classList.remove('flipped');
+    
+    setTimeout(() => {
+        document.getElementById('card-de').innerText = card.de;
+        document.getElementById('card-ru').innerText = card.ru;
+        document.getElementById('card-pl').innerText = `Мн.ч. / формы: ${card.pl}`;
+        document.getElementById('card-category').innerText = card.category;
+        document.getElementById('card-counter').innerText = `${currentCardIndex + 1} из ${wordsData.length}`;
+    }, 150);
+}
+
+function flipCard() {
+    document.getElementById('flashcard').classList.toggle('flipped');
+}
+
+function nextCard() {
+    currentCardIndex = (currentCardIndex + 1) % wordsData.length;
+    updateCard();
+}
+
+function prevCard() {
+    currentCardIndex = (currentCardIndex - 1 + wordsData.length) % wordsData.length;
+    updateCard();
+}
+
+// Инициализация карточек при старте
+updateCard();
+
+// --- Логика Тренажера Perfekt (Твой существующий код) ---
 const quizData = [
-    // --- 1. Haben vs Sein (1-8) ---
-    {
-        q: "Выбери вспомогательный глагол: 'Ich _____ gestern nach Berlin gefahren.'",
-        opts: [
-            { txt: "habe", correct: false, exp: "Fahren — это глагол перемещения из точки А в точку Б, с ним нужен sein!" },
-            { txt: "bin", correct: true, exp: "Fahren обозначает движение и перемещение в пространстве, поэтому образует Perfekt с sein (ich bin gefahren)." },
-            { txt: "war", correct: false, exp: "War — это форма Präteritum, а не вспомогательный глагол для Perfekt!" }
-        ]
-    },
-    {
-        q: "Выбери вспомогательный глагол: 'Wir _____ gestern eine neue Küche gekauft.'",
-        opts: [
-            { txt: "sind", correct: false, exp: "Kaufen — это обычное действие с прямым дополнением, без движения или смены состояния." },
-            { txt: "haben", correct: true, exp: "Kaufen — переходный глагол (купить что-то), поэтому Perfekt образуется с haben (wir haben gekauft)." },
-            { txt: "werden", correct: false, exp: "Werden используется для Futur I или Passiv!" }
-        ]
-    },
-    {
-        q: "Глагол смены состояния: 'Das Kind _____ sehr schnell eingeschlafen.' (Заснуть)",
-        opts: [
-            { txt: "ist", correct: true, exp: "Einschlafen (засыпать) — это смена состояния (из бодрствования в сон), поэтому Perfekt строится с sein!" },
-            { txt: "hat", correct: false, exp: "Смена состояния (заснуть, проснуться, умереть) всегда требует sein, а не haben!" },
-            { txt: "wird", correct: false, exp: "Wird здесь не подходит." }
-        ]
-    },
-    {
-        q: "Глагол состояния 'Schlafen' (стационарный): 'Er _____ 8 Stunden geschlafen.'",
-        opts: [
-            { txt: "ist", correct: false, exp: "Осторожно! Schlafen (спать) — это НЕ смена состояния, а процесс. Нужен haben!" },
-            { txt: "hat", correct: true, exp: "Schlafen выражает процесс/состояние без смены. С ним используется haben (er hat geschlafen)!" },
-            { txt: "sein", correct: false, exp: "Форма инфинитива не используется в роли глагола-связки." }
-        ]
-    },
-    {
-        q: "Глагол движения: '_____ ihr schon nach Hause gekommen?'",
-        opts: [
-            { txt: "Seid", correct: true, exp: "Kommen — глагол движения в направлении цели, для 'ihr' форма от sein — 'seid'." },
-            { txt: "Habt", correct: false, exp: "Kommen требует sein, а не haben!" },
-            { txt: "Sind", correct: false, exp: "Sind — это форма для wir/sie/Sie, а для ihr нужна форма 'seid'!" }
-        ]
-    },
-    {
-        q: "Глагол 'Passieren' (случаться/происходить): 'Was _____ gestern passiert?'",
-        opts: [
-            { txt: "hat", correct: false, exp: "Passieren (происходить) обозначает изменение ситуации и образует Perfekt с sein!" },
-            { txt: "ist", correct: true, exp: "Passieren всегда образует Perfekt с глаголом sein (Was ist passiert?)." },
-            { txt: "wird", correct: false, exp: "Wird — это настоящее время или будущее." }
-        ]
-    },
-    {
-        q: "Глагол 'Bleiben' (оставаться - ИСКЛЮЧЕНИЕ!): 'Ich _____ am Wochenende zu Hause geblieben.'",
-        opts: [
-            { txt: "bin", correct: true, exp: "Исключение! Глагол bleiben (оставаться) НЕ обозначает движение, но ВСЕГДА образует Perfekt с sein!" },
-            { txt: "habe", correct: false, exp: "Хотя движения нет, bleiben — это глагол-исключение, работающий только с sein!" },
-            { txt: "werde", correct: false, exp: "Неверная форма." }
-        ]
-    },
-    {
-        q: "Глагол 'Sein' в Perfekt: 'Wo _____ du im Sommer gewesen?'",
-        opts: [
-            { txt: "hast", correct: false, exp: "Сам глагол sein образует Perfekt с помощью самого себя (sein + gewesen)!" },
-            { txt: "bist", correct: true, exp: "Форма Perfekt от sein образуется через 'sein + gewesen' (du bist gewesen)." },
-            { txt: "warst", correct: false, exp: "Warst — это Präteritum, а в вопросе требуется форма Perfekt с 'gewesen'." }
-        ]
-    },
-
-    // --- 2. Слабые глаголы ge-...-t (9-12) ---
-    {
-        q: "Partizip II от регулярного глагола 'machen': 'Was hast du gestern _____?'",
-        opts: [
-            { txt: "gemacht", correct: true, exp: "Регулярный слабый глагол: приставка ge- + корень mach + окончание -t = gemacht." },
-            { txt: "gemachen", correct: false, exp: "Слабые глаголы не сохраняют окончание -en!" },
-            { txt: "gemachted", correct: false, exp: "В немецком нет окончания -ed!" }
-        ]
-    },
-    {
-        q: "Partizip II от слабых глаголов на -d/-t (arbeiten): 'Er hat viel _____.'",
-        opts: [
-            { txt: "gearbeitet", correct: true, exp: "Корень оканчивается на -t (arbeit-), поэтому добавляется -et для удобства произношения: gearbeitet." },
-            { txt: "gearbeitt", correct: false, exp: "Невозможно произнести два 't' подряд без соединительного -e-!" },
-            { txt: "gearbeiten", correct: false, exp: "Слабые глаголы получают окончание -t/-et." }
-        ]
-    },
-    {
-        q: "Partizip II от глагола 'kaufen': 'Wir haben ein Geschenk _____.'",
-        opts: [
-            { txt: "gekauft", correct: true, exp: "Слабый глагол: ge + kauf + t = gekauft." },
-            { txt: "gekaufen", correct: false, exp: "Kaufen — слабый глагол, оканчивается на -t!" },
-            { txt: "kaufen", correct: false, exp: "Просто инфинитив не образует Perfekt без ge- и -t." }
-        ]
-    },
-    {
-        q: "Partizip II от глагола 'hören': 'Hast du die Musik _____?'",
-        opts: [
-            { txt: "gehört", correct: true, exp: "Hören — правильный слабый глагол: ge + hör + t = gehört." },
-            { txt: "gehören", correct: false, exp: "Gehören — это отдельный глагол со значением 'принадлежать'!" },
-            { txt: "gehörst", correct: false, exp: "Gehörst — это личная форма настоящего времени (du gehörst)." }
-        ]
-    },
-
-    // --- 3. Сильные глаголы (13-18) ---
-    {
-        q: "Partizip II от сильного глагола 'gehen': 'Sie ist zum Supermarkt _____.'",
-        opts: [
-            { txt: "gegeht", correct: false, exp: "Gehen — сильный глагол с изменением корня в Partizip II!" },
-            { txt: "gegangen", correct: true, exp: "Сильный глагол: меняет корень на gang- и сохраняет окончание -en = gegangen." },
-            { txt: "gegingen", correct: false, exp: "Gingen — это форма Präteritum!" }
-        ]
-    },
-    {
-        q: "Partizip II от сильного глагола 'trinken': 'Ich habe Wasser _____.'",
-        opts: [
-            { txt: "getrunken", correct: true, exp: "Сильный глагол trinken меняет гласную i -> u в Partizip II (getrunken)." },
-            { txt: "getrinkt", correct: false, exp: "Trinken не является слабым глаголом!" },
-            { txt: "getrunkened", correct: false, exp: "Несуществующая форма." }
-        ]
-    },
-    {
-        q: "Partizip II от сильного глагола 'sprechen': 'Wir haben mit dem Chef _____.'",
-        opts: [
-            { txt: "gesprecht", correct: false, exp: "Sprechen — сильный глагол, он меняет гласную и оканчивается на -en!" },
-            { txt: "gesprochen", correct: true, exp: "Sprechen меняет e -> o и оканчивается на -en = gesprochen." },
-            { txt: "gesprechen", correct: false, exp: "Корневая гласная должна измениться на 'o'!" }
-        ]
-    },
-    {
-        q: "Partizip II от сильного глагола 'lesen': 'Hast du die Zeitung _____?'",
-        opts: [
-            { txt: "gelesen", correct: true, exp: "Lesen — сильный глагол, который сохраняет корневую гласную e (gelesen)." },
-            { txt: "gelest", correct: false, exp: "Lesen не образует форму с -t!" },
-            { txt: "gelesenот", correct: false, exp: "Описка." }
-        ]
-    },
-    {
-        q: "Partizip II от сильного глагола 'schreiben': 'Er hat einen Brief _____.'",
-        opts: [
-            { txt: "geschreibt", correct: false, exp: "Schreiben — сильный глагол!" },
-            { txt: "geschrieben", correct: true, exp: "Schreiben меняет ei -> ie: geschrieben." },
-            { txt: "geschreiben", correct: false, exp: "Дифтонг ei должен измениться на ie!" }
-        ]
-    },
-    {
-        q: "Partizip II от сильного глагола 'sehen': 'Ich habe dich nicht _____.'",
-        opts: [
-            { txt: "gesehen", correct: true, exp: "Sehen — сильный глагол: ge + seh + en = gesehen." },
-            { txt: "geseht", correct: false, exp: "Sehen — сильный глагол, -t на конце не ставится!" },
-            { txt: "gesieht", correct: false, exp: "Sieht — это форма настоящего времени (er sieht)." }
-        ]
-    },
-
-    // --- 4. Отделяемые приставки (19-22) ---
-    {
-        q: "Отделяемая приставка (einkaufen): 'Meine Mutter hat gestern _____.'",
-        opts: [
-            { txt: "geeinkauft", correct: false, exp: "У глаголов с отделяемой приставкой ge- вставляется МЕЖДУ приставкой и корнем!" },
-            { txt: "eingekauft", correct: true, exp: "Отделяемая приставка: ein + ge + kauf + t = eingekauft." },
-            { txt: "einkauft", correct: false, exp: "Нельзя терять префикс ge-!" }
-        ]
-    },
-    {
-        q: "Отделяемая приставка + сильный глагол (aufstehen): 'Ich bin um 7 Uhr _____.'",
-        opts: [
-            { txt: "aufgestanden", correct: true, exp: "Auf (приставка) + ge + stand (измененный корень) + en = aufgestanden." },
-            { txt: "aufgesteht", correct: false, exp: "Stehen — сильный глагол, корень меняется на stand-!" },
-            { txt: "geaufstanden", correct: false, exp: "Ge- помещается ПОСЛЕ отделяемой приставки!" }
-        ]
-    },
-    {
-        q: "Отделяемая приставка (anrufen): 'Hast du deinen Bruder _____?'",
-        opts: [
-            { txt: "angeruft", correct: false, exp: "Rufen — сильный глагол, сохраняет -en на конце!" },
-            { txt: "angerufen", correct: true, exp: "An + ge + ruf + en = angerufen." },
-            { txt: "geanruft", correct: false, exp: "Ge- стоит после отделяемой приставки an-." }
-        ]
-    },
-    {
-        q: "Отделяемая приставка (mitbringen): 'Er hat Pizza _____.'",
-        opts: [
-            { txt: "mitgebracht", correct: true, exp: "Bringen — смешанный глагол (gebracht). С приставкой: mit + ge + bracht = mitgebracht." },
-            { txt: "mitgebringt", correct: false, exp: "Bringen меняет корень на -bracht!" },
-            { txt: "gemitbracht", correct: false, exp: "Приставка mit- идет перед ge-." }
-        ]
-    },
-
-    // --- 5. Неотделяемые приставки & -ieren (23-26) ---
-    {
-        q: "Неотделяемая приставка (besuchen): 'Wir haben unsere Oma _____.'",
-        opts: [
-            { txt: "gebesucht", correct: false, exp: "Глаголы с неотделяемыми приставками (be-, ge-, er-, ver-, zer-) НЕ получают ge-!" },
-            { txt: "besucht", correct: true, exp: "Приставка be- неотделяемая, поэтому ge- НЕ добавляется: besucht." },
-            { txt: "besuchen", correct: false, exp: "Нужна форма Partizip II c -t на конце." }
-        ]
-    },
-    {
-        q: "Неотделяемая приставка (verstehen): 'Hast du alles _____?'",
-        opts: [
-            { txt: "verstanden", correct: true, exp: "Ver- неотделяемая приставка (без ge-). Глагол stehen -> standen: verstanden." },
-            { txt: "vergestanden", correct: false, exp: "У неотделяемых приставок (ver-) приставка ge- НЕ вставляется!" },
-            { txt: "goverstanden", correct: false, exp: "Некорректная форма." }
-        ]
-    },
-    {
-        q: "Глагол на -ieren (fotografieren): 'Er hat die Stadt _____.'",
-        opts: [
-            { txt: "gefotografiert", correct: false, exp: "Глаголы на -ieren никогда НЕ берут приставку ge-!" },
-            { txt: "fotografiert", correct: true, exp: "Глаголы на -ieren не имеют приставки ge-: fotografiert." },
-            { txt: "fotografieren", correct: false, exp: "Это инфинитив!" }
-        ]
-    },
-    {
-        q: "Глагол на -ieren (studieren): 'Sie hat in Berlin _____.'",
-        opts: [
-            { txt: "gestudiert", correct: false, exp: "Глаголы на -ieren НЕ используют ge-!" },
-            { txt: "studiert", correct: true, exp: "Правильно: studieren -> studiert (без ge-)." },
-            { txt: "studieren", correct: false, exp: "Инфинитив без изменений." }
-        ]
-    },
-
-    // --- 6. Порядок слов в предложении (27-30) ---
-    {
-        q: "Порядок слов: 'Вчера я купил хлеб.'",
-        opts: [
-            { txt: "Gestern ich habe Brot gekauft.", correct: false, exp: "На 2-м месте ВСЕГДА должен стоять спрягаемый глагол (habe)!" },
-            { txt: "Gestern habe ich Brot gekauft.", correct: true, exp: "Позиция 1: Gestern, Позиция 2: habe (вспомогательный глагол), Конец: gekauft (Partizip II)." },
-            { txt: "Gestern habe ich gekauft Brot.", correct: false, exp: "Partizip II (gekauft) ОБЯЗАТЕЛЬНО должен стоять в самом конце!" }
-        ]
-    },
-    {
-        q: "Порядок слов в вопросе без вопросительного слова: 'Ты уже сделал домашку?'",
-        opts: [
-            { txt: "Hast du schon die Hausaufgabe gemacht?", correct: true, exp: "Вопрос без вопросительного слова: Вспомогательный глагол на 1 место, Partizip II — в конец!" },
-            { txt: "Du hast schon die Hausaufgabe gemacht?", correct: false, exp: "Это структура утвердительного предложения." },
-            { txt: "Hast du gemacht schon die Hausaufgabe?", correct: false, exp: "Partizip II (gemacht) должен быть на самом последнем месте!" }
-        ]
-    },
-    {
-        q: "Порядок слов с вопросительным словом (W-Frage): 'Когда ты приехал?'",
-        opts: [
-            { txt: "Wann bist du angekommen?", correct: true, exp: "Позиция 1: Wann, Позиция 2: bist, В самом конце: angekommen." },
-            { txt: "Wann du bist angekommen?", correct: false, exp: "После вопросительного слова на 2 место сразу идет глагол bist!" },
-            { txt: "Wann angekommen bist du?", correct: false, exp: "Partizip II обязан уйти в самый конец предложения!" }
-        ]
-    },
-    {
-        q: "Порядок слов с несколькими членами предложения: 'Мы вечером пошли в кино.'",
-        opts: [
-            { txt: "Wir sind am Abend ins Kino gegangen.", correct: true, exp: "Подлежащее (Wir) + вспомогательный (sind) + обстоятельства + Partizip II в конце (gegangen)." },
-            { txt: "Wir sind gegangen am Abend ins Kino.", correct: false, exp: "Gegangen не может стоять в середине предложения!" },
-            { txt: "Wir gegangen sind am Abend ins Kino.", correct: false, exp: "Вспомогательный глагол sind должен быть на 2 месте!" }
-        ]
-    }
+    { q: "Выбери вспомогательный глагол: 'Ich _____ gestern nach Berlin gefahren.'", opts: [{ txt: "habe", correct: false, exp: "Fahren — это глагол перемещения из точки А в точку Б, с ним нужен sein!" }, { txt: "bin", correct: true, exp: "Fahren обозначает движение, поэтому Perfekt с sein." }, { txt: "war", correct: false, exp: "War — форма Präteritum." }] },
+    { q: "Выбери вспомогательный глагол: 'Wir _____ gestern eine neue Küche gekauft.'", opts: [{ txt: "sind", correct: false, exp: "Kaufen — обычное действие без движения." }, { txt: "haben", correct: true, exp: "Kaufen — переходный глагол, образует Perfekt с haben." }, { txt: "werden", correct: false, exp: "Werden — не подходит." }] },
+    { q: "Глагол смены состояния: 'Das Kind _____ sehr schnell eingeschlafen.'", opts: [{ txt: "ist", correct: true, exp: "Einschlafen (засыпать) — смена состояния, с ним нужен sein!" }, { txt: "hat", correct: false, exp: "Нужен sein." }, { txt: "wird", correct: false, exp: "Не подходит." }] },
+    { q: "Partizip II от регулярного глагола 'machen': 'Was hast du gestern _____?'", opts: [{ txt: "gemacht", correct: true, exp: "Регулярный слабый глагол: ge + mach + t = gemacht." }, { txt: "gemachen", correct: false, exp: "Неверно." }, { txt: "gemachted", correct: false, exp: "Неверно." }] },
+    { q: "Partizip II от сильного глагола 'gehen': 'Sie ist zum Supermarkt _____.'", opts: [{ txt: "gegeht", correct: false, exp: "Сильный глагол с изменением корня!" }, { txt: "gegangen", correct: true, exp: "Правильно: gegangen." }, { txt: "gegingen", correct: false, exp: "Форма Präteritum." }] }
 ];
 
 let totalScore = 0;
 let answeredCount = 0;
-const userErrors = [];
 
 function renderQuiz() {
     const container = document.getElementById('quiz-container');
     container.innerHTML = '';
-
     quizData.forEach((item, index) => {
         const card = document.createElement('div');
         card.className = 'exercise-item';
-        card.id = `ex-${index}`;
-
         let optsHtml = '';
         item.opts.forEach((opt, oIndex) => {
-            optsHtml += `
-                <button class="option-btn" onclick="checkEx(${index}, ${oIndex})">
-                    ${opt.txt}
-                </button>
-            `;
+            optsHtml += `<button class="option-btn" onclick="checkEx(${index}, ${oIndex})">${opt.txt}</button>`;
         });
-
-        card.innerHTML = `
-            <div class="exercise-num">Задание ${index + 1} из 30</div>
-            <div class="exercise-title">${item.q}</div>
-            <div class="options-grid">${optsHtml}</div>
-            <div class="feedback"></div>
-        `;
-
+        card.innerHTML = `<div style="color: var(--accent); font-size: 0.9rem; margin-bottom: 5px;">Задание ${index + 1}</div><div style="font-size: 1.1rem; margin-bottom: 10px;">${item.q}</div><div class="options-grid">${optsHtml}</div><div class="feedback" id="fb-${index}"></div>`;
         container.appendChild(card);
     });
 }
 
 function checkEx(exIndex, optIndex) {
-    const card = document.getElementById(`ex-${exIndex}`);
     const selectedOpt = quizData[exIndex].opts[optIndex];
-    const feedback = card.querySelector('.feedback');
-    const buttons = card.querySelectorAll('.option-btn');
-
-    // Находим верный вариант
-    const correctOptIndex = quizData[exIndex].opts.findIndex(o => o.correct);
-    const correctOpt = quizData[exIndex].opts[correctOptIndex];
-
-    // Блокируем все кнопки в текущей карточке
-    buttons.forEach(btn => btn.disabled = true);
-
+    const fb = document.getElementById(`fb-${exIndex}`);
     if (selectedOpt.correct) {
-        buttons[optIndex].style.borderColor = 'var(--success)';
-        buttons[optIndex].style.opacity = '1';
-        buttons[optIndex].style.fontWeight = 'bold';
-        
-        feedback.className = 'feedback correct';
-        feedback.innerHTML = '✅ <b>Верно!</b> ' + selectedOpt.exp;
+        fb.className = 'feedback correct';
+        fb.innerHTML = '✅ <b>Верно!</b> ' + selectedOpt.exp;
         totalScore++;
     } else {
-        // Выбранная неправильно кнопка подсвечивается красным
-        buttons[optIndex].style.borderColor = 'var(--error)';
-        buttons[optIndex].style.opacity = '1';
-
-        // Правильная кнопка подсвечивается зеленым контуром
-        buttons[correctOptIndex].style.borderColor = 'var(--success)';
-        buttons[correctOptIndex].style.opacity = '1';
-        buttons[correctOptIndex].style.fontWeight = 'bold';
-
-        feedback.className = 'feedback incorrect';
-        feedback.innerHTML = `
-            ❌ <b>Ошибка:</b> ${selectedOpt.exp}<br>
-            <span class="correct-highlight">✅ <b>Правильный ответ:</b> "${correctOpt.txt}" — ${correctOpt.exp}</span>
-        `;
-
-        // Сохраняем ошибку для финального разбора
-        userErrors.push({
-            num: exIndex + 1,
-            q: quizData[exIndex].q,
-            userAns: selectedOpt.txt,
-            userExp: selectedOpt.exp,
-            correctAns: correctOpt.txt,
-            correctExp: correctOpt.exp
-        });
+        fb.className = 'feedback incorrect';
+        fb.innerHTML = '❌ <b>Ошибка:</b> ' + selectedOpt.exp;
     }
-
     answeredCount++;
-
-    // Обновляем статистику
     document.getElementById('score').innerText = totalScore;
-    const percent = Math.round((totalScore / 30) * 100);
-    document.getElementById('progress-percent').innerText = `${percent}%`;
-
-    // Если ответили на все вопросы — показываем итоговый разбор
-    if (answeredCount === quizData.length) {
-        showSummary();
-    }
+    document.getElementById('progress-percent').innerText = `${Math.round((answeredCount / quizData.length) * 100)}%`;
 }
 
-function showSummary() {
-    const summaryContainer = document.getElementById('summary-container');
-    const summaryStats = document.getElementById('summary-stats');
-    const errorsList = document.getElementById('errors-list');
-
-    summaryContainer.style.display = 'block';
-    
-    const percent = Math.round((totalScore / 30) * 100);
-    summaryStats.innerHTML = `Твой итоговый результат: <b>${totalScore} из 30 (${percent}%)</b>`;
-
-    errorsList.innerHTML = '';
-
-    if (userErrors.length === 0) {
-        errorsList.innerHTML = `
-            <div style="text-align: center; color: #4ade80; font-size: 1.2rem; font-weight: bold; margin: 20px 0;">
-                🎉 Фантастика! Ты не допустил ни одной ошибки!
-            </div>
-        `;
-    } else {
-        let errorsHtml = `<h3 style="color: var(--accent); margin-bottom: 15px;">Ошибки для повторения (${userErrors.length}):</h3>`;
-        
-        userErrors.forEach((err) => {
-            errorsHtml += `
-                <div class="error-card">
-                    <div class="error-card-title">Задание ${err.num}: ${err.q}</div>
-                    <div class="error-user-ans">❌ <b>Твой ответ:</b> "${err.userAns}" — ${err.userExp}</div>
-                    <div class="error-correct-ans">✅ <b>Правильно:</b> "${err.correctAns}" — ${err.correctExp}</div>
-                </div>
-            `;
-        });
-
-        errorsList.innerHTML = errorsHtml;
-    }
-
-    // Прокрутка к блоку итогов
-    summaryContainer.scrollIntoView({ behavior: 'smooth' });
-}
-
-// Запуск приложения
 renderQuiz();
 </script>
-
 </body>
 </html>
