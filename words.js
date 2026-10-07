@@ -1,5 +1,6 @@
+// База слов по модулям
 const wordsData = [
-    // --- Тема 1: Город и Транспорт (страница 44) ---
+    // --- Город, Транспорт и Ориентация (S. 44) ---
     { de: "die Ampel", pl: "die Ampeln", ru: "светофор", category: "Stadt & Verkehr" },
     { de: "die Anmeldung", pl: "die Anmeldungen", ru: "регистрация, запись", category: "Stadt & Verkehr" },
     { de: "die Auskunft", pl: "die Auskünfte", ru: "справочная, справка", category: "Stadt & Verkehr" },
@@ -24,8 +25,8 @@ const wordsData = [
     { de: "halten", pl: "hielt, gehalten", ru: "останавливаться", category: "Stadt & Verkehr" },
     { de: "umsteigen", pl: "stieg um, umgestiegen", ru: "пересаживаться", category: "Stadt & Verkehr" },
 
-    // --- Тема 2: Здоровье и Тело (страница 68) ---
-    { de: "der Arm", pl: "die Arme", ru: "рука (от плеча до кисти)", category: "Gesundheit" },
+    // --- Здоровье, Тело и Врачи (S. 68) ---
+    { de: "der Arm", pl: "die Arme", ru: "рука (от плеча)", category: "Gesundheit" },
     { de: "der Arzt", pl: "die Ärzte", ru: "врач", category: "Gesundheit" },
     { de: "das Auge", pl: "die Augen", ru: "глаз", category: "Gesundheit" },
     { de: "der Bauch", pl: "die Bäuche", ru: "живот", category: "Gesundheit" },
@@ -55,7 +56,17 @@ const wordsData = [
     { de: "die Tabletten", pl: "Plural", ru: "таблетки", category: "Gesundheit" },
     { de: "der Zahn", pl: "die Zähne", ru: "зуб", category: "Gesundheit" },
     { de: "abnehmen", pl: "nahm ab, abgenommen", ru: "худеть", category: "Gesundheit" },
-    { de: "untersuchen", pl: "untersuchte, untersucht", ru: "обследовать, осматривать", category: "Gesundheit" },
+    { de: "untersuchen", pl: "untersuchte, untersucht", ru: "обследовать", category: "Gesundheit" },
     { de: "wehtun", pl: "tat weh, wehgetan", ru: "болеть, причинять боль", category: "Gesundheit" },
-    { de: "zunehmen", pl: "nahm zu, zugenommen", ru: "полнеть, набирать вес", category: "Gesundheit" }
+    { de: "zunehmen", pl: "nahm zu, zugenommen", ru: "полнеть", category: "Gesundheit" }
 ];
+
+// Функция перемешивания карточек в случайном порядке (Алгоритм Фишера-Йейтса)
+function shuffleWords(array) {
+    let shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+}

@@ -32,7 +32,7 @@
         h1 { color: var(--accent); font-size: 2rem; margin-bottom: 8px; }
 
         /* Раздел КАРТОЧЕК */
-        .flashcard-container { perspective: 1000px; width: 100%; max-width: 450px; height: 260px; margin: 20px auto; cursor: pointer; }
+        .flashcard-container { perspective: 1000px; width: 100%; max-width: 480px; height: 270px; margin: 20px auto; cursor: pointer; }
         .flashcard { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.6s ease; }
         .flashcard.flipped { transform: rotateY(180deg); }
         .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 12px; border: 2px solid var(--accent); background-color: var(--card-bg); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; text-align: center; box-shadow: 0 8px 25px rgba(0,0,0,0.4); }
@@ -41,14 +41,16 @@
         .card-sub { font-size: 1.1rem; color: var(--text-muted); }
         .card-hint { position: absolute; bottom: 12px; font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
 
-        .controls { display: flex; justify-content: center; gap: 15px; margin-top: 20px; }
-        .action-btn { background-color: var(--accent); color: #0f172a; border: none; padding: 10px 24px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .controls { display: flex; justify-content: center; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+        .action-btn { background-color: var(--accent); color: #0f172a; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; }
         .action-btn:hover { opacity: 0.9; transform: translateY(-2px); }
 
         /* Раздел ШПАРАГАЛОК */
         .cheat-card { background-color: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 20px; line-height: 1.6; }
         .cheat-card h2 { color: var(--accent); margin-bottom: 12px; font-size: 1.3rem; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .cheat-card ul { margin-left: 20px; margin-top: 8px; }
+        .cheat-card li { margin-bottom: 6px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 10px; }
         th, td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; }
         th { background-color: #0f172a; color: var(--accent); }
 
@@ -67,7 +69,7 @@
 
 <div class="container">
     <header>
-        <h1>Deutsch A1: Учебный Вход</h1>
+        <h1>Deutsch A1: Hub & Trainer</h1>
         <p style="color: var(--text-muted)">Карточки слов, шпаргалки и интерактивные тренажёры</p>
     </header>
 
@@ -102,36 +104,19 @@
         <div class="controls">
             <button class="action-btn" onclick="prevCard()">← Назад</button>
             <button class="action-btn" onclick="nextCard()">Вперёд →</button>
+            <button class="action-btn" style="background-color: #e2e8f0;" onclick="reshuffle()">🔀 Перемешать</button>
         </div>
     </div>
 
     <!-- Вкладка 2: Шпаргалки -->
     <div id="tab-cheatsheet" class="tab-content">
-        <div class="cheat-card">
-            <h2>1. Время Perfekt (Прошедшее разговорное)</h2>
-            <p>Образуется по формуле: <b>haben / sein (на 2-м месте) + Partizip II (в самом конце)</b>.</p>
-            <table>
-                <tr><th>Вспомогательный глагол</th><th>Когда используется</th><th>Пример</th></tr>
-                <tr><td><b>sein</b></td><td>Движение (из А в Б), смена состояния, плюс <i>bleiben</i> и <i>sein</i></td><td>Ich <b>bin</b> gefahren. / Er <b>ist</b> eingeschlafen.</td></tr>
-                <tr><td><b>haben</b></td><td>Все остальные глаголы (процесс, действие с предметом)</td><td>Ich <b>habe</b> gekauft. / Wir <b>haben</b> geschlafen.</td></tr>
-            </table>
-        </div>
-
-        <div class="cheat-card">
-            <h2>2. Артикли и Падежи (Akkusativ & Dativ)</h2>
-            <table>
-                <tr><th>Падеж</th><th>Мужской (der)</th><th>Средний (das)</th><th>Женский (die)</th><th>Мн.ч. (die)</th></tr>
-                <tr><td><b>Nominativ</b> (Кто/Что?)</td><td>der / ein</td><td>das / ein</td><td>die / eine</td><td>die / -</td></tr>
-                <tr><td><b>Akkusativ</b> (Кого/Что/Куда?)</td><td><b style="color: var(--accent)">den / einen</b></td><td>das / ein</td><td>die / eine</td><td>die / -</td></tr>
-                <tr><td><b>Dativ</b> (Кому/Где?)</td><td><b>dem / einem</b></td><td><b>dem / einem</b></td><td><b>der / einer</b></td><td><b>den / -n</b></td></tr>
-            </table>
-        </div>
+        <div id="cheatsheet-container"></div>
     </div>
 
     <!-- Вкладка 3: Тренажер Perfekt -->
     <div id="tab-perfekt-quiz" class="tab-content">
         <div class="score-board">
-            <div>Твой результат: <span id="score" style="color: var(--accent); font-size: 1.3rem; font-weight: bold;">0</span> / 30</div>
+            <div>Твой результат: <span id="score" style="color: var(--accent); font-size: 1.3rem; font-weight: bold;">0</span> / 5</div>
             <div id="progress-percent" style="color: var(--text-muted); font-weight: 600;">0%</div>
         </div>
         <div id="quiz-container"></div>
@@ -139,7 +124,11 @@
 </div>
 
 <script src="words.js"></script>
+<script src="cheatsheet.js"></script>
 <script>
+// --- Подгрузка шпаргалок из cheatsheet.js ---
+document.getElementById('cheatsheet-container').innerHTML = cheatSheetHTML;
+
 // --- Переключение вкладок ---
 function switchTab(tabId) {
     document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -150,11 +139,20 @@ function switchTab(tabId) {
 }
 
 // --- Логика Карточек ---
+let activeWords = [];
 let currentCardIndex = 0;
 
+function initCards() {
+    if (typeof wordsData !== 'undefined' && wordsData.length > 0) {
+        activeWords = shuffleWords(wordsData);
+        currentCardIndex = 0;
+        updateCard();
+    }
+}
+
 function updateCard() {
-    if (typeof wordsData === 'undefined' || wordsData.length === 0) return;
-    const card = wordsData[currentCardIndex];
+    if (activeWords.length === 0) return;
+    const card = activeWords[currentCardIndex];
     document.getElementById('flashcard').classList.remove('flipped');
     
     setTimeout(() => {
@@ -162,7 +160,7 @@ function updateCard() {
         document.getElementById('card-ru').innerText = card.ru;
         document.getElementById('card-pl').innerText = `Мн.ч. / формы: ${card.pl}`;
         document.getElementById('card-category').innerText = card.category;
-        document.getElementById('card-counter').innerText = `${currentCardIndex + 1} из ${wordsData.length}`;
+        document.getElementById('card-counter').innerText = `${currentCardIndex + 1} из ${activeWords.length}`;
     }, 150);
 }
 
@@ -171,21 +169,27 @@ function flipCard() {
 }
 
 function nextCard() {
-    currentCardIndex = (currentCardIndex + 1) % wordsData.length;
+    currentCardIndex = (currentCardIndex + 1) % activeWords.length;
     updateCard();
 }
 
 function prevCard() {
-    currentCardIndex = (currentCardIndex - 1 + wordsData.length) % wordsData.length;
+    currentCardIndex = (currentCardIndex - 1 + activeWords.length) % activeWords.length;
     updateCard();
 }
 
-// Инициализация карточек при старте
-updateCard();
+function reshuffle() {
+    activeWords = shuffleWords(activeWords);
+    currentCardIndex = 0;
+    updateCard();
+}
 
-// --- Логика Тренажера Perfekt (Твой существующий код) ---
+// Инициализация при старте
+initCards();
+
+// --- Логика Тренажера Perfekt ---
 const quizData = [
-    { q: "Выбери вспомогательный глагол: 'Ich _____ gestern nach Berlin gefahren.'", opts: [{ txt: "habe", correct: false, exp: "Fahren — это глагол перемещения из точки А в точку Б, с ним нужен sein!" }, { txt: "bin", correct: true, exp: "Fahren обозначает движение, поэтому Perfekt с sein." }, { txt: "war", correct: false, exp: "War — форма Präteritum." }] },
+    { q: "Выбери вспомогательный глагол: 'Ich _____ gestern nach Berlin gefahren.'", opts: [{ txt: "habe", correct: false, exp: "Fahren — это глагол перемещения, с ним нужен sein!" }, { txt: "bin", correct: true, exp: "Fahren обозначает движение, поэтому Perfekt с sein." }, { txt: "war", correct: false, exp: "War — форма Präteritum." }] },
     { q: "Выбери вспомогательный глагол: 'Wir _____ gestern eine neue Küche gekauft.'", opts: [{ txt: "sind", correct: false, exp: "Kaufen — обычное действие без движения." }, { txt: "haben", correct: true, exp: "Kaufen — переходный глагол, образует Perfekt с haben." }, { txt: "werden", correct: false, exp: "Werden — не подходит." }] },
     { q: "Глагол смены состояния: 'Das Kind _____ sehr schnell eingeschlafen.'", opts: [{ txt: "ist", correct: true, exp: "Einschlafen (засыпать) — смена состояния, с ним нужен sein!" }, { txt: "hat", correct: false, exp: "Нужен sein." }, { txt: "wird", correct: false, exp: "Не подходит." }] },
     { q: "Partizip II от регулярного глагола 'machen': 'Was hast du gestern _____?'", opts: [{ txt: "gemacht", correct: true, exp: "Регулярный слабый глагол: ge + mach + t = gemacht." }, { txt: "gemachen", correct: false, exp: "Неверно." }, { txt: "gemachted", correct: false, exp: "Неверно." }] },
