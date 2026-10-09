@@ -132,7 +132,7 @@
     </div>
 </div>
 
-<!-- Подключаем внешние файлы данных -->
+<!-- Подключаем оригинальные файлы без цифр в названиях -->
 <script src="words.js"></script>
 <script src="cheatsheet.js"></script>
 <script src="perfekt-data.js"></script>
@@ -152,23 +152,33 @@ function switchTab(tabId) {
     event.target.classList.add('active');
 }
 
+// --- Безопасное получение массива слов из words.js ---
+function getWordsSource() {
+    if (typeof wordsData !== 'undefined') return wordsData;
+    if (typeof words !== 'undefined' && Array.isArray(words)) return words;
+    return [];
+}
+
 // --- Логика Карточек слов ---
 let activeWords = [];
 let currentCardIndex = 0;
 
 function initCategorySelect() {
     const select = document.getElementById('categoryFilter');
-    if (typeof words === 'undefined') return;
-    const categories = ['Все разделы', ...new Set(words.map(w => w.category))];
+    const sourceWords = getWordsSource();
+    if (sourceWords.length === 0) return;
+
+    const categories = ['Все разделы', ...new Set(sourceWords.map(w => w.category))];
     select.innerHTML = categories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
     filterByCategory('Все разделы');
 }
 
 function filterByCategory(category) {
+    const sourceWords = getWordsSource();
     if (category === 'Все разделы') {
-        activeWords = shuffleWords(words);
+        activeWords = shuffleWords(sourceWords);
     } else {
-        activeWords = shuffleWords(words.filter(w => w.category === category));
+        activeWords = shuffleWords(sourceWords.filter(w => w.category === category));
     }
     currentCardIndex = 0;
     updateCard();
