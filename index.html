@@ -83,6 +83,7 @@
         <button class="nav-btn active" onclick="switchTab('cards')">🎴 Карточки слов</button>
         <button class="nav-btn" onclick="switchTab('cheatsheet')">📖 База правил</button>
         <button class="nav-btn" onclick="switchTab('quiz-perfekt')">⚡ Тренажёр Perfekt</button>
+        <button class="nav-btn" onclick="switchTab('quiz-prateritum')">📜 Тренажёр Präteritum</button>
     </nav>
 
     <!-- Вкладка 1: Карточки слов -->
@@ -130,12 +131,22 @@
         </div>
         <div id="container-perfekt"></div>
     </div>
+
+    <!-- Вкладка 4: Тренажер Präteritum -->
+    <div id="tab-quiz-prateritum" class="tab-content">
+        <div class="score-board">
+            <div>Правильных ответов: <span id="score-prateritum" style="color: var(--accent); font-size: 1.3rem; font-weight: bold;">0</span> / 20</div>
+            <div id="progress-prateritum" style="color: var(--text-muted); font-weight: 600;">Сессия из 20 вопросов</div>
+        </div>
+        <div id="container-prateritum"></div>
+    </div>
 </div>
 
-<!-- Подключаем оригинальные файлы данных -->
+<!-- Подключаем файлы данных -->
 <script src="words.js"></script>
 <script src="cheatsheet.js"></script>
 <script src="perfekt-data.js"></script>
+<script src="preteritum-data.js"></script>
 
 <script>
 // --- Подгрузка базы правил ---
@@ -212,7 +223,7 @@ function shuffleWords(array) {
 
 // --- УНИВЕРСАЛЬНЫЙ ДВИЖОК ТРЕНАЖЕРА ---
 let activeQuizSessions = {};
-let quizResetHandlers = {}; // Безопасный словарь обработчиков перезапуска
+let quizResetHandlers = {};
 
 function initQuizEngine(fullDataArray, containerId, scoreId, progressId) {
     let currentSession = [];
@@ -229,7 +240,7 @@ function initQuizEngine(fullDataArray, containerId, scoreId, progressId) {
         document.getElementById(progressId).innerText = `Вопросов в сессии: ${currentSession.length}`;
         
         renderHTML();
-        window.scrollTo({ top: 0, behavior: 'smooth' }); // Возврат наверх при обновлении
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function renderHTML() {
@@ -262,7 +273,6 @@ function initQuizEngine(fullDataArray, containerId, scoreId, progressId) {
         btnWrapper.style.marginTop = '25px';
         btnWrapper.style.marginBottom = '40px';
 
-        // Создаем рабочую кнопку перезапуска сессии
         const resetBtn = document.createElement('button');
         resetBtn.className = 'action-btn';
         resetBtn.style.backgroundColor = 'var(--success)';
@@ -280,7 +290,6 @@ function initQuizEngine(fullDataArray, containerId, scoreId, progressId) {
         container.appendChild(btnWrapper);
     }
 
-    // Регистрируем функцию перезапуска в словаре
     quizResetHandlers[containerId] = loadNewSession;
     loadNewSession();
 }
@@ -316,10 +325,13 @@ function handleAnswerClick(btnElement, qIndex, originalOptIdx, containerId, scor
 
 // Запуск при полной загрузке страницы
 window.addEventListener('DOMContentLoaded', () => {
-    initCategorySelect(); // Инициализация карточек
+    initCategorySelect();
     
     if (typeof perfektQuestions !== 'undefined') {
         initQuizEngine(perfektQuestions, 'container-perfekt', 'score-perfekt', 'progress-perfekt');
+    }
+    if (typeof prateritumQuestions !== 'undefined') {
+        initQuizEngine(prateritumQuestions, 'container-prateritum', 'score-prateritum', 'progress-prateritum');
     }
 });
 </script>
