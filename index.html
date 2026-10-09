@@ -149,46 +149,6 @@
 <script src="preteritum-data.js"></script>
 
 <script>
-// --- Словарь частых неправильных/сильных глаголов для карточек ---
-const verbFormsMap = {
-    "fahren": { prät: "fuhr", perf: "ist gefahren" },
-    "gehen": { prät: "ging", perf: "ist gegangen" },
-    "laufen": { prät: "lief", perf: "ist gelaufen" },
-    "kommen": { prät: "kam", perf: "ist gekommen" },
-    "fliegen": { prät: "flog", perf: "ist geflogen" },
-    "reisen": { prät: "reiste", perf: "ist gereist" },
-    "wandern": { prät: "wanderte", perf: "ist gewandert" },
-    "schwimmen": { prät: "schwamm", perf: "ist geschwommen" },
-    "fallen": { prät: "fiel", perf: "ist gefallen" },
-    "aufstehen": { prät: "stand auf", perf: "ist aufgestanden" },
-    "einschlafen": { prät: "schlief ein", perf: "ist eingeschlafen" },
-    "aufwachen": { prät: "wachte auf", perf: "ist aufgewacht" },
-    "werden": { prät: "wurde", perf: "ist geworden" },
-    "sein": { prät: "war", perf: "ist gewesen" },
-    "bleiben": { prät: "blieb", perf: "ist geblieben" },
-    "machen": { prät: "machte", perf: "hat gemacht" },
-    "kaufen": { prät: "kaufte", perf: "hat gekauft" },
-    "lernen": { prät: "lernte", perf: "hat gelernt" },
-    "lesen": { prät: "las", perf: "hat gelesen" },
-    "schreiben": { prät: "schrieb", perf: "hat geschrieben" },
-    "essen": { prät: "aß", perf: "hat gegessen" },
-    "trinken": { prät: "trank", perf: "hat getrunken" },
-    "sehen": { prät: "sah", perf: "hat gesehen" },
-    "sprechen": { prät: "sprach", perf: "hat gesprochen" },
-    "arbeiten": { prät: "arbeitete", perf: "hat gearbeitet" },
-    "spielen": { prät: "spielte", perf: "hat gespielt" },
-    "kochen": { prät: "kochte", perf: "hat gekocht" },
-    "hören": { prät: "hörte", perf: "hat gehört" },
-    "verstehen": { prät: "verstand", perf: "hat verstanden" },
-    "besuchen": { prät: "besuchte", perf: "hat besucht" },
-    "anrufen": { prät: "rief an", perf: "hat angerufen" },
-    "finden": { prät: "fand", perf: "hat gefunden" },
-    "geben": { prät: "gab", perf: "hat gegeben" },
-    "nehmen": { prät: "nahm", perf: "hat genommen" },
-    "schlafen": { prät: "schlief", perf: "hat geschlafen" },
-    "stehen": { prät: "stand", perf: "hat gestanden" }
-};
-
 // --- Подгрузка базы правил ---
 if (typeof cheatSheetHTML !== 'undefined') {
     document.getElementById('cheatsheet-container').innerHTML = cheatSheetHTML;
@@ -246,20 +206,14 @@ function updateCard() {
         const subElem = document.getElementById('card-pl');
         const hintElem = document.getElementById('card-hint-text');
 
-        // Проверяем, глагол ли это (категория Verben)
         if (card.category === 'Verben') {
-            // Очищаем инфинитив от рефлексивных частиц для поиска в словаре форм
-            const cleanDe = card.de.replace(/^[\(\)\s\w]*\s*/, '').trim().toLowerCase();
-            const foundForm = verbFormsMap[cleanDe];
-            
-            if (foundForm) {
-                subElem.innerText = `Prät: ${foundForm.prät} | Perf: ${foundForm.perf}`;
+            if (card.prat && card.perf) {
+                subElem.innerText = `${card.prat} | ${card.perf}`;
             } else {
-                subElem.innerText = `Prät: регулярный | Perf: hat ...-t`;
+                subElem.innerText = `ich ... | ich habe ...`;
             }
-            hintElem.innerText = "ФОРМЫ ПРОШЕДШЕГО ВРЕМЕНИ";
+            hintElem.innerText = "ФОРМЫ (ICH)";
         } else {
-            // Для существительных и остальных слов оставляем старую логику
             subElem.innerText = `Мн.ч. / формы: ${card.pl}`;
             hintElem.innerText = "РУССКИЙ ПЕРЕВОД";
         }
@@ -272,15 +226,6 @@ function flipCard() { document.getElementById('flashcard').classList.toggle('fli
 function nextCard() { currentCardIndex = (currentCardIndex + 1) % activeWords.length; updateCard(); }
 function prevCard() { currentCardIndex = (currentCardIndex - 1 + activeWords.length) % activeWords.length; updateCard(); }
 function reshuffle() { activeWords = shuffleWords(activeWords); currentCardIndex = 0; updateCard(); }
-
-function shuffleWords(array) {
-    const shuffled = [...array];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    return shuffled;
-}
 
 // --- УНИВЕРСАЛЬНЫЙ ДВИЖОК ТРЕНАЖЕРА ---
 let activeQuizSessions = {};
