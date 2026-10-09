@@ -42,7 +42,7 @@ while (perfektQuestions.length < 500) {
     if (typeVariant === 0) {
         const isSein = v.aux === "sein";
         perfektQuestions.push({
-            q: `Вопрос #${qId}: Выберите правильный вспомогательный глагол: "Ich _____ gestern nach Berlin ${v.p2}." (${v.hint})`,
+            q: `Выберите правильный вспомогательный глагол: "Ich _____ gestern nach Berlin ${v.p2}." (${v.hint})`,
             opts: [
                 { txt: isSein ? "habe" : "sind", correct: false, exp: `Неверно. Глагол '${v.inf}' требует вспомогательный глагол ${v.aux}.` },
                 { txt: isSein ? "bin" : "haben", correct: true, exp: `Верно! Глагол '${v.inf}' образует Perfekt с '${v.aux}' (${v.hint}).` },
@@ -52,7 +52,7 @@ while (perfektQuestions.length < 500) {
     } else if (typeVariant === 1) {
         const wrongP2 = v.p2.endsWith("t") ? v.p2 + "en" : v.p2 + "t";
         perfektQuestions.push({
-            q: `Вопрос #${qId}: Какая форма Partizip II правильная для глагола '${v.inf}' в предложении "Wir haben das Buch ____."?`,
+            q: `Какая форма Partizip II правильная для глагола '${v.inf}' в предложении "Wir haben das Buch ____."?`,
             opts: [
                 { txt: v.p2, correct: true, exp: `Правильно! Partizip II от '${v.inf}' — это '${v.p2}'.` },
                 { txt: wrongP2, correct: false, exp: `Ошибка. '${wrongP2}' — неверная форма.` },
@@ -64,7 +64,7 @@ while (perfektQuestions.length < 500) {
         const correctAux = v.aux === "sein" ? "ist" : "hat";
         const wrongAux = v.aux === "sein" ? "hat" : "ist";
         perfektQuestions.push({
-            q: `Вопрос #${qId}: Соберите предложение правильно: "${pron} _____ nach Hause ${v.p2}."`,
+            q: `Соберите предложение правильно: "${pron} _____ nach Hause ${v.p2}."`,
             opts: [
                 { txt: correctAux, correct: true, exp: `Верно! С местоимением '${pron}' используется '${correctAux}' (${v.hint}).` },
                 { txt: wrongAux, correct: false, exp: `Ошибка. Глагол '${v.inf}' работает с другим вспомогательным глаголом.` },
@@ -73,7 +73,7 @@ while (perfektQuestions.length < 500) {
         });
     } else {
         perfektQuestions.push({
-            q: `Вопрос #${qId}: Где в предложении с Perfekt обычно стоит форма Partizip II (${v.p2})?`,
+            q: `Где в предложении с Perfekt обычно стоит форма Partizip II (${v.p2})?`,
             opts: [
                 { txt: "В самом конце предложения", correct: true, exp: "Совершенно верно! В Perfekt смысловой глагол в Partizip II улетает в конец." },
                 { txt: "Сразу после подлежащего на 2-м месте", correct: false, exp: "На 2-м месте стоит вспомогательный глагол (haben/sein)." },
