@@ -59,7 +59,7 @@
         th, td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; }
         th { background-color: #0f172a; color: var(--accent); }
 
-        /* Стили тренажера Perfekt */
+        /* Стили тренажеров */
         .score-board { position: sticky; top: 15px; z-index: 100; background-color: var(--card-bg); border: 2px solid var(--accent); border-radius: 10px; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
         .exercise-item { background-color: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 20px; }
         .options-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-top: 10px; }
@@ -75,25 +75,21 @@
 <div class="container">
     <header>
         <h1>Deutsch A1: Hub & Trainer</h1>
-        <p style="color: var(--text-muted)">Карточки слов, шпаргалки и интерактивные тренажёры</p>
+        <p style="color: var(--text-muted)">Карточки слов, база правил и интерактивные тренажёры</p>
     </header>
 
     <!-- Навигация по разделам -->
     <nav>
         <button class="nav-btn active" onclick="switchTab('cards')">🎴 Карточки слов</button>
-        <button class="nav-btn" onclick="switchTab('cheatsheet')">📖 Шпаргалки A1</button>
-        <button class="nav-btn" onclick="switchTab('perfekt-quiz')">⚡ Тренажёр Perfekt</button>
+        <button class="nav-btn" onclick="switchTab('cheatsheet')">📖 База правил</button>
+        <button class="nav-btn" onclick="switchTab('quiz-perfekt')">⚡ Тренажёр Perfekt</button>
     </nav>
 
     <!-- Вкладка 1: Карточки слов -->
     <div id="tab-cards" class="tab-content active">
-        
-        <!-- Выпадающий список выбора темы -->
         <div class="category-select-wrapper">
             <label for="categoryFilter" style="color: var(--text-muted); margin-right: 8px;">Раздел:</label>
-            <select id="categoryFilter" class="category-select" onchange="filterByCategory(this.value)">
-                <!-- Заполняется динамически из words.js -->
-            </select>
+            <select id="categoryFilter" class="category-select" onchange="filterByCategory(this.value)"></select>
         </div>
 
         <div style="text-align: center; margin-bottom: 10px;">
@@ -117,29 +113,31 @@
         <div class="controls">
             <button class="action-btn" onclick="prevCard()">← Назад</button>
             <button class="action-btn" onclick="nextCard()">Вперёд →</button>
-            <button class="action-btn" style="background-color: #e2e8f0;" onclick="reshuffle()">🔀 Перемешать</button>
+            <button class="action-btn" style="background-color: #e2e8f0; color: #0f172a;" onclick="reshuffle()">🔀 Перемешать</button>
         </div>
     </div>
 
-    <!-- Вкладка 2: Шпаргалки -->
+    <!-- Вкладка 2: База правил -->
     <div id="tab-cheatsheet" class="tab-content">
         <div id="cheatsheet-container"></div>
     </div>
 
     <!-- Вкладка 3: Тренажер Perfekt -->
-    <div id="tab-perfekt-quiz" class="tab-content">
+    <div id="tab-quiz-perfekt" class="tab-content">
         <div class="score-board">
-            <div>Твой результат: <span id="score" style="color: var(--accent); font-size: 1.3rem; font-weight: bold;">0</span> / 5</div>
-            <div id="progress-percent" style="color: var(--text-muted); font-weight: 600;">0%</div>
+            <div>Правильных ответов: <span id="score-perfekt" style="color: var(--accent); font-size: 1.3rem; font-weight: bold;">0</span> / 20</div>
+            <div id="progress-perfekt" style="color: var(--text-muted); font-weight: 600;">Сессия из 20 вопросов</div>
         </div>
-        <div id="quiz-container"></div>
+        <div id="container-perfekt"></div>
     </div>
 </div>
 
+<!-- Подключаем скрипты данных и логики -->
 <script src="words.js"></script>
 <script src="cheatsheet.js"></script>
+<script src="perfekt-data.js"></script>
 <script>
-// --- Подгрузка шпаргалок из cheatsheet.js ---
+// --- Подгрузка базы правил ---
 if (typeof cheatSheetHTML !== 'undefined') {
     document.getElementById('cheatsheet-container').innerHTML = cheatSheetHTML;
 }
@@ -153,19 +151,15 @@ function switchTab(tabId) {
     event.target.classList.add('active');
 }
 
-// --- Логика Фильтрации и Карточек ---
+// --- Логика Карточек слов ---
 let activeWords = [];
 let currentCardIndex = 0;
 
 function initCategorySelect() {
     const select = document.getElementById('categoryFilter');
     if (typeof words === 'undefined') return;
-
-    // Собираем уникальные категории из массива words (Nomen, Verben, Sonstige)
     const categories = ['Все разделы', ...new Set(words.map(w => w.category))];
     select.innerHTML = categories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
-
-    // По умолчанию ставим фильтр "Все разделы"
     filterByCategory('Все разделы');
 }
 
@@ -183,7 +177,6 @@ function updateCard() {
     if (!activeWords || activeWords.length === 0) return;
     const card = activeWords[currentCardIndex];
     document.getElementById('flashcard').classList.remove('flipped');
-    
     setTimeout(() => {
         document.getElementById('card-de').innerText = card.de;
         document.getElementById('card-ru').innerText = card.ru;
@@ -192,73 +185,113 @@ function updateCard() {
     }, 150);
 }
 
-function flipCard() {
-    document.getElementById('flashcard').classList.toggle('flipped');
+function flipCard() { document.getElementById('flashcard').classList.toggle('flipped'); }
+function nextCard() { currentCardIndex = (currentCardIndex + 1) % activeWords.length; updateCard(); }
+function prevCard() { currentCardIndex = (currentCardIndex - 1 + activeWords.length) % activeWords.length; updateCard(); }
+function reshuffle() { activeWords = shuffleWords(activeWords); currentCardIndex = 0; updateCard(); }
+
+function shuffleWords(array) {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
 }
 
-function nextCard() {
-    currentCardIndex = (currentCardIndex + 1) % activeWords.length;
-    updateCard();
-}
-
-function prevCard() {
-    currentCardIndex = (currentCardIndex - 1 + activeWords.length) % activeWords.length;
-    updateCard();
-}
-
-function reshuffle() {
-    activeWords = shuffleWords(activeWords);
-    currentCardIndex = 0;
-    updateCard();
-}
-
-// Инициализация выпадающего меню при старте
 initCategorySelect();
 
-// --- Логика Тренажера Perfekt ---
-const quizData = [
-    { q: "Выбери вспомогательный глагол: 'Ich _____ gestern nach Berlin gefahren.'", opts: [{ txt: "habe", correct: false, exp: "Fahren — это глагол перемещения, с ним нужен sein!" }, { txt: "bin", correct: true, exp: "Fahren обозначает движение, поэтому Perfekt с sein." }, { txt: "war", correct: false, exp: "War — форма Präteritum." }] },
-    { q: "Выбери вспомогательный глагол: 'Wir _____ gestern eine neue Küche gekauft.'", opts: [{ txt: "sind", correct: false, exp: "Kaufen — обычное действие без движения." }, { txt: "haben", correct: true, exp: "Kaufen — переходный глагол, образует Perfekt с haben." }, { txt: "werden", correct: false, exp: "Werden — не подходит." }] },
-    { q: "Глагол смены состояния: 'Das Kind _____ sehr schnell eingeschlafen.'", opts: [{ txt: "ist", correct: true, exp: "Einschlafen (засыпать) — смена состояния, с ним нужен sein!" }, { txt: "hat", correct: false, exp: "Нужен sein." }, { txt: "wird", correct: false, exp: "Не подходит." }] },
-    { q: "Partizip II от регулярного глагола 'machen': 'Was hast du gestern _____?'", opts: [{ txt: "gemacht", correct: true, exp: "Регулярный слабый глагол: ge + mach + t = gemacht." }, { txt: "gemachen", correct: false, exp: "Неверно." }, { txt: "gemachted", correct: false, exp: "Неверно." }] },
-    { q: "Partizip II от сильного глагола 'gehen': 'Sie ist zum Supermarkt _____.'", opts: [{ txt: "gegeht", correct: false, exp: "Сильный глагол с изменением корня!" }, { txt: "gegangen", correct: true, exp: "Правильно: gegangen." }, { txt: "gegingen", correct: false, exp: "Форма Präteritum." }] }
-];
+// --- УНИВЕРСАЛЬНЫЙ ДВИЖОК ТРЕНАЖЕРА (20 случайных вопросов из базы 500) ---
+function initQuizEngine(fullDataArray, containerId, scoreId, progressId) {
+    let currentSession = [];
+    let score = 0;
 
-let totalScore = 0;
-let answeredCount = 0;
+    function loadNewSession() {
+        // Перемешиваем огромную базу и берем ровно 20 случайных вопросов
+        const shuffled = [...fullDataArray].sort(() => Math.random() - 0.5);
+        currentSession = shuffled.slice(0, Math.min(20, shuffled.length));
+        score = 0;
 
-function renderQuiz() {
-    const container = document.getElementById('quiz-container');
-    container.innerHTML = '';
-    quizData.forEach((item, index) => {
-        const card = document.createElement('div');
-        card.className = 'exercise-item';
-        let optsHtml = '';
-        item.opts.forEach((opt, oIndex) => {
-            optsHtml += `<button class="option-btn" onclick="checkEx(${index}, ${oIndex})">${opt.txt}</button>`;
-        });
-        card.innerHTML = `<div style="color: var(--accent); font-size: 0.9rem; margin-bottom: 5px;">Задание ${index + 1}</div><div style="font-size: 1.1rem; margin-bottom: 10px;">${item.q}</div><div class="options-grid">${optsHtml}</div><div class="feedback" id="fb-${index}"></div>`;
-        container.appendChild(card);
-    });
-}
-
-function checkEx(exIndex, optIndex) {
-    const selectedOpt = quizData[exIndex].opts[optIndex];
-    const fb = document.getElementById(`fb-${exIndex}`);
-    if (selectedOpt.correct) {
-        fb.className = 'feedback correct';
-        fb.innerHTML = '✅ <b>Верно!</b> ' + selectedOpt.exp;
-        totalScore++;
-    } else {
-        fb.className = 'feedback incorrect';
-        fb.innerHTML = '❌ <b>Ошибка:</b> ' + selectedOpt.exp;
+        document.getElementById(scoreId).innerText = score;
+        document.getElementById(progressId).innerText = `Вопросов в сессии: ${currentSession.length}`;
+        
+        renderHTML();
     }
-    answeredCount++;
-    document.getElementById('score').innerText = totalScore;
-    document.getElementById('progress-percent').innerText = `${Math.round((answeredCount / quizData.length) * 100)}%`;
+
+    function renderHTML() {
+        const container = document.getElementById(containerId);
+        container.innerHTML = '';
+
+        currentSession.forEach((item, qIndex) => {
+            const card = document.createElement('div');
+            card.className = 'exercise-item';
+
+            // Перемешиваем варианты ответа для каждого вопроса
+            const shuffledOpts = [...item.opts].sort(() => Math.random() - 0.5);
+
+            let optsHtml = '';
+            shuffledOpts.forEach((opt) => {
+                optsHtml += `<button class="option-btn" onclick="handleAnswerClick(this, ${qIndex}, ${opt.correct}, '${encodeURIComponent(opt.exp)}', '${containerId}', '${scoreId}')">${opt.txt}</button>`;
+            });
+
+            card.innerHTML = `
+                <div style="color: var(--accent); font-size: 0.9rem; margin-bottom: 5px;">Задание ${qIndex + 1} из ${currentSession.length}</div>
+                <div style="font-size: 1.1rem; margin-bottom: 10px;">${item.q}</div>
+                <div class="options-grid">${optsHtml}</div>
+                <div class="feedback" id="${containerId}-fb-${qIndex}"></div>
+            `;
+            container.appendChild(card);
+        });
+
+        // Кнопка перезапуска для получения абсолютно новых 20 случайных вопросов
+        const btnWrapper = document.createElement('div');
+        btnWrapper.style.textAlign = 'center';
+        btnWrapper.style.marginTop = '25px';
+        btnWrapper.style.marginBottom = '40px';
+        btnWrapper.innerHTML = `
+            <button class="action-btn" onclick="restart_${containerId}()" style="background-color: var(--success); color: #fff; padding: 14px 30px; font-size: 1.05rem;">
+                🔄 Пройти ещё раз (новые 20 вопросов)
+            </button>
+        `;
+        container.appendChild(btnWrapper);
+    }
+
+    window[`restart_${containerId}`] = loadNewSession;
+    loadNewSession();
 }
 
-renderQuiz();
+function handleAnswerClick(btnElement, qIndex, isCorrect, encodedExp, containerId, scoreId) {
+    const parentGrid = btnElement.parentElement;
+    const buttons = parentGrid.querySelectorAll('.option-btn');
+    
+    buttons.forEach(b => b.disabled = true); // Блокируем выбор после клика
+
+    const feedbackDiv = document.getElementById(`${containerId}-fb-${qIndex}`);
+    const explanation = decodeURIComponent(encodedExp);
+
+    if (isCorrect) {
+        btnElement.style.backgroundColor = 'rgba(34, 197, 94, 0.25)';
+        btnElement.style.borderColor = 'var(--success)';
+        feedbackDiv.className = 'feedback correct';
+        feedbackDiv.innerHTML = '✅ <b>Верно!</b> ' + explanation;
+        
+        let scoreElem = document.getElementById(scoreId);
+        scoreElem.innerText = parseInt(scoreElem.innerText) + 1;
+    } else {
+        btnElement.style.backgroundColor = 'rgba(239, 68, 68, 0.25)';
+        btnElement.style.borderColor = 'var(--error)';
+        feedbackDiv.className = 'feedback incorrect';
+        feedbackDiv.innerHTML = '❌ <b>Ошибка:</b> ' + explanation;
+    }
+    feedbackDiv.style.display = 'block';
+}
+
+// Запуск тренажера Perfekt при загрузке
+window.addEventListener('DOMContentLoaded', () => {
+    if (typeof perfektQuestions !== 'undefined') {
+        initQuizEngine(perfektQuestions, 'container-perfekt', 'score-perfekt', 'progress-perfekt');
+    }
+});
 </script>
 </body>
 </html>
