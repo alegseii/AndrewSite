@@ -1,8 +1,7 @@
-// Автоматически сгенерированная база из 500 вопросов по теме Perfekt (A1-A2)
+// Автоматически сгенерированная база из 500 вопросов по теме Perfekt (А1-А2)
 const perfektQuestions = [];
 
 const perfectVerbsData = [
-    // Глаголы с SEIN (движение, смена состояния)
     { inf: "fahren", p2: "gefahren", aux: "sein", hint: "Движение / поездка" },
     { inf: "gehen", p2: "gegangen", aux: "sein", hint: "Движение / ходьба" },
     { inf: "laufen", p2: "gelaufen", aux: "sein", hint: "Движение / бег" },
@@ -18,8 +17,6 @@ const perfectVerbsData = [
     { inf: "werden", p2: "geworden", aux: "sein", hint: "Смена состояния / становление" },
     { inf: "sein", p2: "gewesen", aux: "sein", hint: "Состояние / быть" },
     { inf: "bleiben", p2: "geblieben", aux: "sein", hint: "Состояние / оставаться" },
-
-    // Глаголы с HABEN (переходные, обычные действия)
     { inf: "machen", p2: "gemacht", aux: "haben", hint: "Обычное действие" },
     { inf: "kaufen", p2: "gekauft", aux: "haben", hint: "Переходный глагол / покупка" },
     { inf: "lernen", p2: "gelernt", aux: "haben", hint: "Обычное действие / учеба" },
@@ -37,14 +34,12 @@ const perfectVerbsData = [
     { inf: "besuchen", p2: "besucht", aux: "haben", hint: "Неотделяемая приставка / посещение" }
 ];
 
-// Автоматическая генерация 500 вариативных вопросов на основе базы глаголов и паттернов
 let qId = 1;
 while (perfektQuestions.length < 500) {
     const v = perfectVerbsData[qId % perfectVerbsData.length];
     const typeVariant = qId % 4;
 
     if (typeVariant === 0) {
-        // Тип 1: Выбор вспомогательного глагола (haben vs sein)
         const isSein = v.aux === "sein";
         perfektQuestions.push({
             q: `Вопрос #${qId}: Выберите правильный вспомогательный глагол: "Ich _____ gestern nach Berlin ${v.p2}." (${v.hint})`,
@@ -55,7 +50,6 @@ while (perfektQuestions.length < 500) {
             ]
         });
     } else if (typeVariant === 1) {
-        // Тип 2: Выбор правильной формы Partizip II
         const wrongP2 = v.p2.endsWith("t") ? v.p2 + "en" : v.p2 + "t";
         perfektQuestions.push({
             q: `Вопрос #${qId}: Какая форма Partizip II правильная для глагола '${v.inf}' в предложении "Wir haben das Buch ____."?`,
@@ -66,7 +60,6 @@ while (perfektQuestions.length < 500) {
             ]
         });
     } else if (typeVariant === 2) {
-        // Тип 3: Порядок слов / предложение с местоимением er/sie
         const pron = qId % 2 === 0 ? "Er" : "Sie";
         const correctAux = v.aux === "sein" ? "ist" : "hat";
         const wrongAux = v.aux === "sein" ? "hat" : "ist";
@@ -79,7 +72,6 @@ while (perfektQuestions.length < 500) {
             ]
         });
     } else {
-        // Тип 4: Проверка места Partizip II в предложении
         perfektQuestions.push({
             q: `Вопрос #${qId}: Где в предложении с Perfekt обычно стоит форма Partizip II (${v.p2})?`,
             opts: [
