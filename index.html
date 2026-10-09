@@ -90,9 +90,9 @@
         
         <!-- Выпадающий список выбора темы -->
         <div class="category-select-wrapper">
-            <label for="categoryFilter" style="color: var(--text-muted); margin-right: 8px;">Тема:</label>
+            <label for="categoryFilter" style="color: var(--text-muted); margin-right: 8px;">Раздел:</label>
             <select id="categoryFilter" class="category-select" onchange="filterByCategory(this.value)">
-                <!-- Заполняется динамически -->
+                <!-- Заполняется динамически из words.js -->
             </select>
         </div>
 
@@ -159,21 +159,21 @@ let currentCardIndex = 0;
 
 function initCategorySelect() {
     const select = document.getElementById('categoryFilter');
-    if (typeof wordsData === 'undefined') return;
+    if (typeof words === 'undefined') return;
 
-    // Собираем уникальные категории
-    const categories = ['Все темы', ...new Set(wordsData.map(w => w.category))];
+    // Собираем уникальные категории из массива words (Nomen, Verben, Sonstige)
+    const categories = ['Все разделы', ...new Set(words.map(w => w.category))];
     select.innerHTML = categories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
 
-    // По умолчанию ставим фильтр "Все темы"
-    filterByCategory('Все темы');
+    // По умолчанию ставим фильтр "Все разделы"
+    filterByCategory('Все разделы');
 }
 
 function filterByCategory(category) {
-    if (category === 'Все темы') {
-        activeWords = shuffleWords(wordsData);
+    if (category === 'Все разделы') {
+        activeWords = shuffleWords(words);
     } else {
-        activeWords = shuffleWords(wordsData.filter(w => w.category === category));
+        activeWords = shuffleWords(words.filter(w => w.category === category));
     }
     currentCardIndex = 0;
     updateCard();
