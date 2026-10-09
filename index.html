@@ -200,9 +200,7 @@ function shuffleWords(array) {
     return shuffled;
 }
 
-initCategorySelect();
-
-// --- УНИВЕРСАЛЬНЫЙ ДВИЖОК ТРЕНАЖЕРА (Безопасная обработка индексов) ---
+// --- УНИВЕРСАЛЬНЫЙ ДВИЖОК ТРЕНАЖЕРА ---
 let activeQuizSessions = {};
 
 function initQuizEngine(fullDataArray, containerId, scoreId, progressId) {
@@ -292,8 +290,10 @@ function handleAnswerClick(btnElement, qIndex, originalOptIdx, containerId, scor
     feedbackDiv.style.display = 'block';
 }
 
-// Автоматический запуск тренажера Perfekt при загрузке страницы
+// Запуск при полной загрузке страницы
 window.addEventListener('DOMContentLoaded', () => {
+    initCategorySelect(); // Инициализация карточек и категорий слов
+    
     if (typeof perfektQuestions !== 'undefined') {
         initQuizEngine(perfektQuestions, 'container-perfekt', 'score-perfekt', 'progress-perfekt');
     }
