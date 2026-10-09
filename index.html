@@ -132,7 +132,7 @@
     </div>
 </div>
 
-<!-- Подключаем оригинальные файлы без цифр в названиях -->
+<!-- Подключаем оригинальные файлы данных -->
 <script src="words.js"></script>
 <script src="cheatsheet.js"></script>
 <script src="perfekt-data.js"></script>
@@ -212,6 +212,7 @@ function shuffleWords(array) {
 
 // --- УНИВЕРСАЛЬНЫЙ ДВИЖОК ТРЕНАЖЕРА ---
 let activeQuizSessions = {};
+let quizResetHandlers = {}; // Безопасный словарь обработчиков перезапуска
 
 function initQuizEngine(fullDataArray, containerId, scoreId, progressId) {
     let currentSession = [];
@@ -228,6 +229,7 @@ function initQuizEngine(fullDataArray, containerId, scoreId, progressId) {
         document.getElementById(progressId).innerText = `Вопросов в сессии: ${currentSession.length}`;
         
         renderHTML();
+        window.scrollTo({ top: 0, behavior: 'smooth' }); // Возврат наверх при обновлении
     }
 
     function renderHTML() {
@@ -259,15 +261,27 @@ function initQuizEngine(fullDataArray, containerId, scoreId, progressId) {
         btnWrapper.style.textAlign = 'center';
         btnWrapper.style.marginTop = '25px';
         btnWrapper.style.marginBottom = '40px';
-        btnWrapper.innerHTML = `
-            <button class="action-btn" onclick="restart_${containerId}()" style="background-color: var(--success); color: #fff; padding: 14px 30px; font-size: 1.05rem;">
-                🔄 Пройти ещё раз (новые 20 вопросов)
-            </button>
-        `;
+
+        // Создаем рабочую кнопку перезапуска сессии
+        const resetBtn = document.createElement('button');
+        resetBtn.className = 'action-btn';
+        resetBtn.style.backgroundColor = 'var(--success)';
+        resetBtn.style.color = '#fff';
+        resetBtn.style.padding = '14px 30px';
+        resetBtn.style.fontSize = '1.05rem';
+        resetBtn.innerHTML = '🔄 Пройти ещё раз (новые 20 вопросов)';
+        resetBtn.onclick = () => {
+            if (quizResetHandlers[containerId]) {
+                quizResetHandlers[containerId]();
+            }
+        };
+
+        btnWrapper.appendChild(resetBtn);
         container.appendChild(btnWrapper);
     }
 
-    window[`restart_${containerId}`] = loadNewSession;
+    // Регистрируем функцию перезапуска в словаре
+    quizResetHandlers[containerId] = loadNewSession;
     loadNewSession();
 }
 
@@ -302,7 +316,7 @@ function handleAnswerClick(btnElement, qIndex, originalOptIdx, containerId, scor
 
 // Запуск при полной загрузке страницы
 window.addEventListener('DOMContentLoaded', () => {
-    initCategorySelect(); // Инициализация карточек и категорий слов
+    initCategorySelect(); // Инициализация карточек
     
     if (typeof perfektQuestions !== 'undefined') {
         initQuizEngine(perfektQuestions, 'container-perfekt', 'score-perfekt', 'progress-perfekt');
