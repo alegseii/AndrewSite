@@ -132,10 +132,11 @@
     </div>
 </div>
 
-<!-- Подключаем скрипты данных и логики -->
+<!-- Подключаем внешние файлы данных -->
 <script src="words.js"></script>
 <script src="cheatsheet.js"></script>
 <script src="perfekt-data.js"></script>
+
 <script>
 // --- Подгрузка базы правил ---
 if (typeof cheatSheetHTML !== 'undefined') {
@@ -201,16 +202,19 @@ function shuffleWords(array) {
 
 initCategorySelect();
 
-// --- УНИВЕРСАЛЬНЫЙ ДВИЖОК ТРЕНАЖЕРА (20 случайных вопросов из базы 500) ---
+// --- УНИВЕРСАЛЬНЫЙ ДВИЖОК ТРЕНАЖЕРА (Безопасная обработка индексов) ---
+let activeQuizSessions = {};
+
 function initQuizEngine(fullDataArray, containerId, scoreId, progressId) {
     let currentSession = [];
     let score = 0;
 
     function loadNewSession() {
-        // Перемешиваем огромную базу и берем ровно 20 случайных вопросов
         const shuffled = [...fullDataArray].sort(() => Math.random() - 0.5);
         currentSession = shuffled.slice(0, Math.min(20, shuffled.length));
         score = 0;
+
+        activeQuizSessions[containerId] = currentSession;
 
         document.getElementById(scoreId).innerText = score;
         document.getElementById(progressId).innerText = `Вопросов в сессии: ${currentSession.length}`;
@@ -226,12 +230,12 @@ function initQuizEngine(fullDataArray, containerId, scoreId, progressId) {
             const card = document.createElement('div');
             card.className = 'exercise-item';
 
-            // Перемешиваем варианты ответа для каждого вопроса
-            const shuffledOpts = [...item.opts].sort(() => Math.random() - 0.5);
+            const indexedOpts = item.opts.map((opt, originalIdx) => ({ ...opt, originalIdx }));
+            const shuffledOpts = indexedOpts.sort(() => Math.random() - 0.5);
 
             let optsHtml = '';
             shuffledOpts.forEach((opt) => {
-                optsHtml += `<button class="option-btn" onclick="handleAnswerClick(this, ${qIndex}, ${opt.correct}, '${encodeURIComponent(opt.exp)}', '${containerId}', '${scoreId}')">${opt.txt}</button>`;
+                optsHtml += `<button class="option-btn" onclick="handleAnswerClick(this, ${qIndex}, ${opt.originalIdx}, '${containerId}', '${scoreId}')">${opt.txt}</button>`;
             });
 
             card.innerHTML = `
@@ -243,7 +247,6 @@ function initQuizEngine(fullDataArray, containerId, scoreId, progressId) {
             container.appendChild(card);
         });
 
-        // Кнопка перезапуска для получения абсолютно новых 20 случайных вопросов
         const btnWrapper = document.createElement('div');
         btnWrapper.style.textAlign = 'center';
         btnWrapper.style.marginTop = '25px';
@@ -260,20 +263,23 @@ function initQuizEngine(fullDataArray, containerId, scoreId, progressId) {
     loadNewSession();
 }
 
-function handleAnswerClick(btnElement, qIndex, isCorrect, encodedExp, containerId, scoreId) {
+function handleAnswerClick(btnElement, qIndex, originalOptIdx, containerId, scoreId) {
     const parentGrid = btnElement.parentElement;
     const buttons = parentGrid.querySelectorAll('.option-btn');
     
-    buttons.forEach(b => b.disabled = true); // Блокируем выбор после клика
+    buttons.forEach(b => b.disabled = true);
+
+    const sessionData = activeQuizSessions[containerId];
+    const questionObj = sessionData[qIndex];
+    const selectedOpt = questionObj.opts[originalOptIdx];
 
     const feedbackDiv = document.getElementById(`${containerId}-fb-${qIndex}`);
-    const explanation = decodeURIComponent(encodedExp);
 
-    if (isCorrect) {
+    if (selectedOpt.correct) {
         btnElement.style.backgroundColor = 'rgba(34, 197, 94, 0.25)';
         btnElement.style.borderColor = 'var(--success)';
         feedbackDiv.className = 'feedback correct';
-        feedbackDiv.innerHTML = '✅ <b>Верно!</b> ' + explanation;
+        feedbackDiv.innerHTML = '✅ <b>Верно!</b> ' + selectedOpt.exp;
         
         let scoreElem = document.getElementById(scoreId);
         scoreElem.innerText = parseInt(scoreElem.innerText) + 1;
@@ -281,12 +287,12 @@ function handleAnswerClick(btnElement, qIndex, isCorrect, encodedExp, containerI
         btnElement.style.backgroundColor = 'rgba(239, 68, 68, 0.25)';
         btnElement.style.borderColor = 'var(--error)';
         feedbackDiv.className = 'feedback incorrect';
-        feedbackDiv.innerHTML = '❌ <b>Ошибка:</b> ' + explanation;
+        feedbackDiv.innerHTML = '❌ <b>Ошибка:</b> ' + selectedOpt.exp;
     }
     feedbackDiv.style.display = 'block';
 }
 
-// Запуск тренажера Perfekt при загрузке
+// Автоматический запуск тренажера Perfekt при загрузке страницы
 window.addEventListener('DOMContentLoaded', () => {
     if (typeof perfektQuestions !== 'undefined') {
         initQuizEngine(perfektQuestions, 'container-perfekt', 'score-perfekt', 'progress-perfekt');
