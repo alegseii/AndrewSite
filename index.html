@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deutsch A1: Hub & Trainer</title>
+    <title>Deutsch Hub & Trainer (A1-A2)</title>
     <style>
         :root {
             --bg-color: #0f172a;
@@ -31,8 +31,9 @@
         header { text-align: center; padding: 10px 0 20px; margin-bottom: 20px; }
         h1 { color: var(--accent); font-size: 2rem; margin-bottom: 8px; }
 
-        /* Выбор категории */
-        .category-select-wrapper { text-align: center; margin-bottom: 15px; }
+        /* Панель фильтров карточек */
+        .filters-panel { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+        .filter-group { display: flex; align-items: center; gap: 8px; }
         .category-select { background-color: var(--card-bg); border: 1px solid var(--accent); color: var(--text-main); padding: 10px 16px; border-radius: 8px; font-size: 1rem; cursor: pointer; outline: none; font-weight: bold; }
         .category-select:focus { border-color: var(--success); }
 
@@ -74,8 +75,8 @@
 
 <div class="container">
     <header>
-        <h1>Deutsch A1: Hub & Trainer</h1>
-        <p style="color: var(--text-muted)">Карточки слов, база правил и интерактивные тренажёры</p>
+        <h1>Deutsch Hub & Trainer</h1>
+        <p style="color: var(--text-muted)">Карточки слов по уровням, база правил и интерактивные тренажёры</p>
     </header>
 
     <!-- Навигация по разделам -->
@@ -88,9 +89,18 @@
 
     <!-- Вкладка 1: Карточки слов -->
     <div id="tab-cards" class="tab-content active">
-        <div class="category-select-wrapper">
-            <label for="categoryFilter" style="color: var(--text-muted); margin-right: 8px;">Раздел:</label>
-            <select id="categoryFilter" class="category-select" onchange="filterByCategory(this.value)"></select>
+        <div class="filters-panel">
+            <div class="filter-group">
+                <label for="levelSelect" style="color: var(--text-muted); font-weight: bold;">Уровень:</label>
+                <select id="levelSelect" class="category-select" onchange="changeLevel(this.value)">
+                    <option value="A1">Уровень A1</option>
+                    <option value="A2">Уровень A2</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="categoryFilter" style="color: var(--text-muted); font-weight: bold;">Раздел:</label>
+                <select id="categoryFilter" class="category-select" onchange="filterByCategory(this.value)"></select>
+            </div>
         </div>
 
         <div style="text-align: center; margin-bottom: 10px;">
@@ -142,8 +152,9 @@
     </div>
 </div>
 
-<!-- Подключаем файлы данных -->
+<!-- Подключаем файлы данных (включая файлы уровней слов) -->
 <script src="words.js"></script>
+<script src="words-a2.js"></script>
 <script src="cheatsheet.js"></script>
 <script src="perfekt-data.js"></script>
 <script src="preteritum-data.js"></script>
@@ -163,29 +174,42 @@ function switchTab(tabId) {
     event.target.classList.add('active');
 }
 
-// --- Безопасное получение массива слов из words.js ---
-function getWordsSource() {
-    if (typeof wordsData !== 'undefined') return wordsData;
-    if (typeof words !== 'undefined' && Array.isArray(words)) return words;
-    return [];
-}
-
-// --- Логика Карточек слов ---
+// --- Логика Карточек слов с поддержкой уровней ---
 let activeWords = [];
 let currentCardIndex = 0;
+let currentLevel = 'A1';
+
+function getCurrentWordsSource() {
+    if (currentLevel === 'A2') {
+        return (typeof wordsDataA2 !== 'undefined') ? wordsDataA2 : [];
+    } else {
+        // Уровень A1
+        if (typeof wordsData !== 'undefined') return wordsData;
+        if (typeof words !== 'undefined' && Array.isArray(words)) return words;
+        return [];
+    }
+}
 
 function initCategorySelect() {
     const select = document.getElementById('categoryFilter');
-    const sourceWords = getWordsSource();
-    if (sourceWords.length === 0) return;
+    const sourceWords = getCurrentWordsSource();
+    if (sourceWords.length === 0) {
+        select.innerHTML = '<option value="Все разделы">Нет данных</option>';
+        return;
+    }
 
     const categories = ['Все разделы', ...new Set(sourceWords.map(w => w.category))];
     select.innerHTML = categories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
     filterByCategory('Все разделы');
 }
 
+function changeLevel(level) {
+    currentLevel = level;
+    initCategorySelect();
+}
+
 function filterByCategory(category) {
-    const sourceWords = getWordsSource();
+    const sourceWords = getCurrentWordsSource();
     if (category === 'Все разделы') {
         activeWords = shuffleWords(sourceWords);
     } else {
@@ -196,7 +220,13 @@ function filterByCategory(category) {
 }
 
 function updateCard() {
-    if (!activeWords || activeWords.length === 0) return;
+    if (!activeWords || activeWords.length === 0) {
+        document.getElementById('card-de').innerText = "Пусто";
+        document.getElementById('card-ru').innerText = "Добавьте слова";
+        document.getElementById('card-pl').innerText = "";
+        document.getElementById('card-counter').innerText = "0 из 0";
+        return;
+    }
     const card = activeWords[currentCardIndex];
     document.getElementById('flashcard').classList.remove('flipped');
     setTimeout(() => {
@@ -226,6 +256,15 @@ function flipCard() { document.getElementById('flashcard').classList.toggle('fli
 function nextCard() { currentCardIndex = (currentCardIndex + 1) % activeWords.length; updateCard(); }
 function prevCard() { currentCardIndex = (currentCardIndex - 1 + activeWords.length) % activeWords.length; updateCard(); }
 function reshuffle() { activeWords = shuffleWords(activeWords); currentCardIndex = 0; updateCard(); }
+
+function shuffleWords(array) {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+}
 
 // --- УНИВЕРСАЛЬНЫЙ ДВИЖОК ТРЕНАЖЕРА ---
 let activeQuizSessions = {};
