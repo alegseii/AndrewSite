@@ -59,6 +59,13 @@
         table { width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 10px; }
         th, td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; }
         th { background-color: #0f172a; color: var(--accent); }
+        .cheat-card .tip { margin-top: 10px; padding: 8px 12px; border-left: 3px solid var(--accent); background-color: rgba(56, 189, 248, 0.08); border-radius: 4px; }
+        .cheat-card p { margin-top: 8px; }
+        .cheat-toc { columns: 2; column-gap: 30px; margin-left: 24px; }
+        .cheat-toc a { color: var(--accent); text-decoration: none; }
+        .cheat-toc a:hover { text-decoration: underline; }
+        .cheat-card { scroll-margin-top: 15px; overflow-x: auto; }
+        @media (max-width: 600px) { .cheat-toc { columns: 1; } }
 
         /* Стили тренажеров */
         .score-board { position: sticky; top: 15px; z-index: 100; background-color: var(--card-bg); border: 2px solid var(--accent); border-radius: 10px; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
@@ -130,6 +137,15 @@
 
     <!-- Вкладка 2: База правил -->
     <div id="tab-cheatsheet" class="tab-content">
+        <div class="filters-panel">
+            <div class="filter-group">
+                <label for="cheatLevelSelect" style="color: var(--text-muted); font-weight: bold;">Уровень:</label>
+                <select id="cheatLevelSelect" class="category-select" onchange="changeCheatLevel(this.value)">
+                    <option value="A1">Уровень A1</option>
+                    <option value="A2">Уровень A2</option>
+                </select>
+            </div>
+        </div>
         <div id="cheatsheet-container"></div>
     </div>
 
@@ -155,15 +171,25 @@
 <!-- Подключаем файлы данных (включая файлы уровней слов) -->
 <script src="words.js"></script>
 <script src="words-a2.js"></script>
-<script src="cheatsheet.js"></script>
+<script src="cheatsheet-a1.js"></script>
+<script src="cheatsheet-a2.js"></script>
 <script src="perfekt-data.js"></script>
 <script src="preteritum-data.js"></script>
 
 <script>
 // --- Подгрузка базы правил ---
-if (typeof cheatSheetHTML !== 'undefined') {
-    document.getElementById('cheatsheet-container').innerHTML = cheatSheetHTML;
+function getCheatSheetSource(level) {
+    if (level === 'A2') return (typeof cheatSheetA2 !== 'undefined') ? cheatSheetA2 : '';
+    return (typeof cheatSheetA1 !== 'undefined') ? cheatSheetA1 : '';
 }
+
+function changeCheatLevel(level) {
+    const html = getCheatSheetSource(level);
+    document.getElementById('cheatsheet-container').innerHTML =
+        html || '<div class="cheat-card"><p>Для этого уровня правил пока нет.</p></div>';
+}
+
+changeCheatLevel('A1');
 
 // --- Переключение вкладок ---
 function switchTab(tabId) {
