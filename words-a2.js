@@ -678,7 +678,7 @@ const wordsDataA2 = [
     {"de": "der Tod", "pl": "-e", "ru": "смерть", "category": "Nomen"},
     {"de": "der Traum", "pl": "\"-e", "ru": "сон, мечта", "category": "Nomen"},
     {"de": "die Veranstaltung", "pl": "-en", "ru": "мероприятие", "category": "Nomen"},
-    {"de": "der Vogel", "pl": "\"-e", "ru": "птица", "category": "Nomen"},
+    {"de": "der Vogel", "pl": "\"-", "ru": "птица", "category": "Nomen"},
     {"de": "der Widerspruch", "pl": "\"-e", "ru": "противоречие, возражение", "category": "Nomen"},
     // Verben (S. 74)
     {"de": "anreden", "pl": "—", "ru": "обращаться к (кому-то словами)", "category": "Verben", "prat": "ich redete an", "perf": "ich habe geredet / angeredet"},

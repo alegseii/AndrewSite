@@ -95,6 +95,7 @@
         <button class="nav-btn" onclick="switchTab('quiz-cases')">🧩 Тренажёр: падежи</button>
         <button class="nav-btn" onclick="switchTab('quiz-prep')">📍 Тренажёр: предлоги</button>
         <button class="nav-btn" onclick="switchTab('quiz-modal')">💪 Тренажёр: модальные</button>
+        <button class="nav-btn" onclick="switchTab('quiz-words')">🔤 Тренажёр слов</button>
     </nav>
 
     <!-- Вкладка 1: Карточки слов -->
@@ -196,11 +197,40 @@
         </div>
         <div id="container-modal"></div>
     </div>
+
+    <!-- Вкладка 8: Тренажер слов (вопросы строятся из words.js и words-a2.js) -->
+    <div id="tab-quiz-words" class="tab-content">
+        <div class="filters-panel">
+            <div class="filter-group">
+                <label for="wordsQuizLevel" style="color: var(--text-muted); font-weight: bold;">Уровень:</label>
+                <select id="wordsQuizLevel" class="category-select" onchange="loadWordsQuiz()">
+                    <option value="A1">Уровень A1</option>
+                    <option value="A2" selected>Уровень A2</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="wordsQuizTopic" style="color: var(--text-muted); font-weight: bold;">Тема:</label>
+                <select id="wordsQuizTopic" class="category-select" onchange="loadWordsQuiz()">
+                    <option value="all">Всё вместе</option>
+                    <option value="article">Артикли</option>
+                    <option value="plural">Множественное число</option>
+                    <option value="verbs">Формы глаголов</option>
+                    <option value="translate">Перевод</option>
+                </select>
+            </div>
+        </div>
+        <div class="score-board">
+            <div>Правильных ответов: <span id="score-words" style="color: var(--accent); font-size: 1.3rem; font-weight: bold;">0</span> / 20</div>
+            <div id="progress-words" style="color: var(--text-muted); font-weight: 600;">Сессия из 20 вопросов</div>
+        </div>
+        <div id="container-words"></div>
+    </div>
 </div>
 
 <!-- Подключаем файлы данных (включая файлы уровней слов) -->
 <script src="words.js"></script>
 <script src="words-a2.js"></script>
+<script src="words-quiz-data.js"></script>
 <script src="cheatsheet-a1.js"></script>
 <script src="cheatsheet-a2.js"></script>
 <script src="perfekt-data.js"></script>
@@ -398,6 +428,43 @@ function initQuizEngine(fullDataArray, containerId, scoreId, progressId) {
     loadNewSession();
 }
 
+// Движок сам пишет «Верно!» / «Ошибка:», поэтому такие слова в начале пояснения убираем
+function cleanExp(s) {
+    return String(s).replace(/^(?:(?:Совершенно верно|Верно|Правильно)[.!]|(?:Неверно|Ошибка)[.:])\s*/i, '');
+}
+
+// --- Тренажёр слов: уровень и тема ---
+function loadWordsQuiz() {
+    const level = document.getElementById('wordsQuizLevel').value;
+    const topic = document.getElementById('wordsQuizTopic').value;
+    const container = document.getElementById('container-words');
+
+    if (typeof buildWordsQuiz !== 'function') {
+        container.innerHTML = '<div class="cheat-card"><p>Не подключён файл words-quiz-data.js.</p></div>';
+        return;
+    }
+
+    const bank = buildWordsQuiz(level);
+    let pool;
+    if (topic === 'all') {
+        // поровну из каждой темы, чтобы перевод не вытеснял остальное
+        pool = [];
+        ['article', 'plural', 'verbs', 'translate'].forEach(k => {
+            pool = pool.concat([...bank[k]].sort(() => Math.random() - 0.5).slice(0, 100));
+        });
+    } else {
+        pool = bank[topic];
+    }
+
+    if (!pool || pool.length === 0) {
+        container.innerHTML = '<div class="cheat-card"><p>Для этого уровня и темы пока нет подходящих слов.</p></div>';
+        document.getElementById('score-words').innerText = 0;
+        document.getElementById('progress-words').innerText = 'Нет вопросов';
+        return;
+    }
+    initQuizEngine(pool, 'container-words', 'score-words', 'progress-words');
+}
+
 function handleAnswerClick(btnElement, qIndex, originalOptIdx, containerId, scoreId) {
     const parentGrid = btnElement.parentElement;
     const buttons = parentGrid.querySelectorAll('.option-btn');
@@ -414,7 +481,7 @@ function handleAnswerClick(btnElement, qIndex, originalOptIdx, containerId, scor
         btnElement.style.backgroundColor = 'rgba(34, 197, 94, 0.25)';
         btnElement.style.borderColor = 'var(--success)';
         feedbackDiv.className = 'feedback correct';
-        feedbackDiv.innerHTML = '✅ <b>Верно!</b> ' + selectedOpt.exp;
+        feedbackDiv.innerHTML = '✅ <b>Верно!</b> ' + cleanExp(selectedOpt.exp);
         
         let scoreElem = document.getElementById(scoreId);
         scoreElem.innerText = parseInt(scoreElem.innerText) + 1;
@@ -422,7 +489,7 @@ function handleAnswerClick(btnElement, qIndex, originalOptIdx, containerId, scor
         btnElement.style.backgroundColor = 'rgba(239, 68, 68, 0.25)';
         btnElement.style.borderColor = 'var(--error)';
         feedbackDiv.className = 'feedback incorrect';
-        feedbackDiv.innerHTML = '❌ <b>Ошибка:</b> ' + selectedOpt.exp;
+        feedbackDiv.innerHTML = '❌ <b>Ошибка:</b> ' + cleanExp(selectedOpt.exp);
     }
     feedbackDiv.style.display = 'block';
 }
@@ -446,6 +513,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (typeof modalQuestions !== 'undefined') {
         initQuizEngine(modalQuestions, 'container-modal', 'score-modal', 'progress-modal');
     }
+    loadWordsQuiz();
 });
 </script>
 </body>
