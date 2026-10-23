@@ -92,6 +92,9 @@
         <button class="nav-btn" onclick="switchTab('cheatsheet')">📖 База правил</button>
         <button class="nav-btn" onclick="switchTab('quiz-perfekt')">⚡ Тренажёр Perfekt</button>
         <button class="nav-btn" onclick="switchTab('quiz-prateritum')">📜 Тренажёр Präteritum</button>
+        <button class="nav-btn" onclick="switchTab('quiz-cases')">🧩 Тренажёр: падежи</button>
+        <button class="nav-btn" onclick="switchTab('quiz-prep')">📍 Тренажёр: предлоги</button>
+        <button class="nav-btn" onclick="switchTab('quiz-modal')">💪 Тренажёр: модальные</button>
     </nav>
 
     <!-- Вкладка 1: Карточки слов -->
@@ -166,6 +169,33 @@
         </div>
         <div id="container-prateritum"></div>
     </div>
+
+    <!-- Вкладка 5: Тренажер падежей -->
+    <div id="tab-quiz-cases" class="tab-content">
+        <div class="score-board">
+            <div>Правильных ответов: <span id="score-cases" style="color: var(--accent); font-size: 1.3rem; font-weight: bold;">0</span> / 20</div>
+            <div id="progress-cases" style="color: var(--text-muted); font-weight: 600;">Сессия из 20 вопросов</div>
+        </div>
+        <div id="container-cases"></div>
+    </div>
+
+    <!-- Вкладка 6: Тренажер предлогов -->
+    <div id="tab-quiz-prep" class="tab-content">
+        <div class="score-board">
+            <div>Правильных ответов: <span id="score-prep" style="color: var(--accent); font-size: 1.3rem; font-weight: bold;">0</span> / 20</div>
+            <div id="progress-prep" style="color: var(--text-muted); font-weight: 600;">Сессия из 20 вопросов</div>
+        </div>
+        <div id="container-prep"></div>
+    </div>
+
+    <!-- Вкладка 7: Тренажер модальных глаголов -->
+    <div id="tab-quiz-modal" class="tab-content">
+        <div class="score-board">
+            <div>Правильных ответов: <span id="score-modal" style="color: var(--accent); font-size: 1.3rem; font-weight: bold;">0</span> / 20</div>
+            <div id="progress-modal" style="color: var(--text-muted); font-weight: 600;">Сессия из 20 вопросов</div>
+        </div>
+        <div id="container-modal"></div>
+    </div>
 </div>
 
 <!-- Подключаем файлы данных (включая файлы уровней слов) -->
@@ -175,6 +205,9 @@
 <script src="cheatsheet-a2.js"></script>
 <script src="perfekt-data.js"></script>
 <script src="preteritum-data.js"></script>
+<script src="cases-data.js"></script>
+<script src="prepositions-data.js"></script>
+<script src="modal-data.js"></script>
 
 <script>
 // --- Подгрузка базы правил ---
@@ -403,6 +436,15 @@ window.addEventListener('DOMContentLoaded', () => {
     }
     if (typeof prateritumQuestions !== 'undefined') {
         initQuizEngine(prateritumQuestions, 'container-prateritum', 'score-prateritum', 'progress-prateritum');
+    }
+    if (typeof casesQuestions !== 'undefined') {
+        initQuizEngine(casesQuestions, 'container-cases', 'score-cases', 'progress-cases');
+    }
+    if (typeof prepositionQuestions !== 'undefined') {
+        initQuizEngine(prepositionQuestions, 'container-prep', 'score-prep', 'progress-prep');
+    }
+    if (typeof modalQuestions !== 'undefined') {
+        initQuizEngine(modalQuestions, 'container-modal', 'score-modal', 'progress-modal');
     }
 });
 </script>
